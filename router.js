@@ -16,7 +16,10 @@
     weather: () => window.weatherApp,
     browser: () => window.browserApp,
     softstore: () => window.softstoreApp,
-    wipefresh: () => window.wipefreshApp
+    wipefresh: () => window.wipefreshApp,
+    nitrorace: () => window.nitroraceApp,
+    nitroracese: () => window.nitroraceSeApp,
+    gamesafe: () => window.gamesafe
   };
 
   window.router = {

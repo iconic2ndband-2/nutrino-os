@@ -1,6 +1,6 @@
 {
-  "name": "Nutrino OS v1.1",
-  "description": "Mobile web operating system simulation with real apps, About Device specifications & storage analytics, 3-step interactive purchase flow, local Web Browser, simulated ISP Broadband Network (network.nos), SuperBank banking portal (superbank.nos), SoftStore app market, Wipe Fresh factory reset utility, clock, calculator, notes, camera, music, gallery, weather, and settings.",
+  "name": "Nutrino OS v1.1.2.1",
+  "description": "Mobile web operating system simulation featuring makeracingstudio.nos company website, Nitro Race SE 2D Canvas racing game with 3 maps and 2 cars, silent pay runtime billing ($2.99/s), Gamesafe cloud save subscription manager, SoftStore with canvas screenshots and detail views, monthly ISP data tracking with speed throttling, SuperBank deposit funds, Wipe Fresh selective reset, About Device hardware specs, browser, camera, music, and full local persistence.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

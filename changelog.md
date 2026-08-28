@@ -2,6 +2,107 @@
 
 All notable changes to the Nutrino OS project will be documented in this file.
 
+## [1.1.2.1] - 2026-08-28
+
+### Added
+- **Company Website (`makeracingstudio.nos`, `makeracingstudio.nos.js`, `makeracingstudio.tabs.js`, `makeracingstudio.se.js`)**:
+  - Full developer portal for Nutrino Games studio accessible via `makeracingstudio.nos` in the local Web Explorer.
+  - 7 persistently accessible navigation tabs:
+    - **Home**: Studio branding ("Making Racing Games Since 2025"), high-speed canvas artwork banner, studio patch notes and announcement feed, and direct SoftStore download link.
+    - **Games**: Complete studio game catalog showcasing OG Nitro Race (7.0 GB, $20.00, Released) and Special Edition Nitro Race SE (9.61 GB, $100.00).
+    - **About**: Studio company overview, headquarters in Nutrino City NOS-11, and core leadership team profiles (Alex Vance, Marcus Speed, Elena Shift).
+    - **Support**: Comprehensive FAQ knowledge base (Installation, ISP broadband troubleshooting, Silent Pay runtime billing), support contact routing, and an interactive feedback submission form saved to local storage.
+    - **Careers**: Active job board for game engineering, 2D art, and QA roles with one-click direct application processing.
+    - **Community**: Forum discussion threads, community statistics (1.2K members), and player leaderboards.
+    - **Special Edition (SE)**: Exclusive expansion hub. Verifies base Nitro Race installation, renders 2D Canvas screenshot previews of 3 maps and 2 car classes, connects to the unified 3-step checkout flow ($100.00), and runs a 9.61 GB download simulation with real-time ETA, bandwidth data consumption, and Home Screen app installation.
+
+- **Nitro Race SE Expansion Game (`nitroracese.js`, `nitroracese.canvas.js`, `nitroracese.pay.js`)**:
+  - Exclusive standalone Special Edition racer installed directly via `makeracingstudio.nos` to the Home Screen.
+  - Pure 2D Canvas graphics engine (0 WebGL / Three.js dependencies, 100% compatible with legacy Intel HD Graphics 2000).
+  - **Special Menu Screen**: Interactive 2D rotating car showcase, volume settings, customizable controls (Arrow Keys or WASD / Mobile Touch Buttons), and developer credits.
+  - **3 Distinct Track Environments**:
+    - **Desert Highway**: Arid golden sands and roadside desert dunes.
+    - **Neon Metropolis**: Cyberpunk dark asphalt, skyscraper rooftops, and neon crosswalks.
+    - **Frozen Tundra**: Icy blue road, snow banks, and dynamic drifting snowflakes.
+  - **2 Vehicle Classes**:
+    - **Vulcan GT**: Balanced crimson sports chassis (Top Speed 140, Accel 75, Handling 80).
+    - **Cobalt Surge**: High-acceleration cobalt supercar (Top Speed 125, Accel 95, Handling 85).
+  - **Silent Pay Metering System (`nitroracese.pay.js`)**:
+    - Real-time in-game runtime billing deducting $2.99 per second from SuperBank checking account.
+    - Insufficient funds detection displaying warning modal followed by graceful system halt error ("Nitro Race SE has stopped.") and return to Home Screen.
+  - **Stateless Session Design**:
+    - Zero local save state; each run is an arcade sprint.
+    - Explicit unsupported status display inside Gamesafe vault dashboard ("Nitro Race SE is not supported yet.").
+
+### Fixed
+- **Nitro Race SE GameOver UI & Navigation**: Fixed overlay pointer events and dynamic display toggling so "Restart Race", "Main Menu", and menu selection buttons respond instantly to clicks and touch input.
+
+### Added (App Management & Deletion)
+- **App Uninstall / Deletion Support Across Nutrino OS**:
+  - `confirmModal.js`: Custom in-OS native confirmation dialog bypassing browser iframe restrictions, with destructive styling and explicit storage reclamation breakdown.
+  - `os.uninstallApp(appId)`: Central OS kernel method to cleanly remove applications from `installedApps` state, wipe app sandbox preferences/links, and synchronize persistent `localStorage`.
+  - **Home Screen Jiggle / Edit Mode**: Long-press any app icon or tap the delete badge to enter uninstall mode with animated icon jiggle and instant modal deletion confirmation.
+  - **SoftStore App Detail Page**: Added dedicated "Uninstall" button alongside "Open App" for installed software with instant state toggle.
+  - **SoftStore Library View**: Added "Delete" action button next to "Launch" in the installed applications inventory.
+  - **About Device Storage Breakdown**: Real-time storage stats now list installed apps with individual "Uninstall" triggers and immediate storage recalculation.
+
+### Added (Wipe Fresh & Clean Rejuvenation)
+- **Wipe Fresh Version Detection & 5-Stage Rejuvenation**:
+  - **Target OS Build Detection**: Inspects active build (`v1.1.2.1`), Linux kernel build, release channel, and cryptographic integrity before formatting.
+  - **5-Stage Animated Wipe Sequence**:
+    1. *Unmounting Storage & Services* (kills daemons, unlinks downloaded apps, purges sandbox locks)
+    2. *Cryptographic Data & Partition Purge* (erases IndexedDB notes & gallery photos, resets credentials)
+    3. *Verifying Target Firmware Build* (validates clean kernel image and checksum integrity)
+    4. *Restoring Factory OS Manifest* (writes pristine system registries, reset themes, initial $100 starting funds)
+    5. *Finalizing Storage & Clean State* (compacts partitions and prepares cold bootloader)
+  - **3-Second Cinematic Godrays Reboot Engine**:
+    - Fullscreen dynamic canvas rendering rotating volumetric godrays, ambient lighting, core glowing badge, multi-stage kernel boot status, and seamless cold boot transition into the clean lockscreen session.
+
+---
+
+## [1.1.2] - 2026-08-28
+
+### Added
+- **Nitro Race 3D Game (`nitrorace.js`, `three.min.js`)**:
+  - Full 3D Three.js high-speed racing simulation featuring automatic acceleration, steerable sports car group, procedural obstacles, collectible coins, dynamic fog, and lighting.
+  - Multi-lane keyboard controls (Arrow keys / A / D) and touch screen overlay buttons for mobile precision.
+  - HUD displaying speed in KM/H, distance traveled in meters, coin balance, and speed level tiers.
+  - Game Over modal with Restart and direct "Save Progress" integration with Gamesafe.
+  - Local bundling of `three.min.js` (IIFE global `THREE`, 0 remote CDN/API calls).
+
+- **Gamesafe Cloud Save Manager (`gamesafe.js`)**:
+  - Game progress backup and synchronization vault.
+  - 1-step account authentication (Sign In / Sign Up with persistent credentials).
+  - High-frequency subscription engine ($0.99 / 20-second active duration) with automatic bank deduction and real-time countdown timer badge.
+  - One-click game linking to Nitro Race with cloud save progress viewer (high score, distance, coins, level, timestamp).
+  - API methods: `window.gamesafe.saveGame()`, `window.gamesafe.loadGame()`, `window.gamesafe.isSubscribed()`, and `window.gamesafe.isConnected()`.
+
+- **SoftStore App Detail Page & Download Flow (`softstoredetail.js`, `softstore.js`)**:
+  - Comprehensive App Detail page displaying app icon, developer, version, category, star rating, downloads count, and file size.
+  - Interactive Canvas Screenshot generator (`screenshots.js`) rendering realistic previews:
+    - Nitro Race: 3D perspective road, neon horizon, speedster car, HUD.
+    - Gamesafe: Cloud dashboard UI, subscription badges, game save sync cards.
+    - Wipe Fresh: Security warning dialog, partition erase overview.
+  - Download simulation reflecting real-time active network speed (`time = size / speed`), live ETA, percentage, and downloaded MB/GB metrics.
+  - Automatic routing into the unified 3-step purchase flow for paid applications.
+
+- **Internet Data Limits & Speed Throttling (`network.nos.js`, `os.js`, `constants.js`)**:
+  - Monthly data limits added across ISP tiers: Free (1 GB), Basic (10 GB), Standard (50 GB), Premium (100 GB), Ultra (200 GB).
+  - Data usage tracking during app downloads and web browsing.
+  - Visual data progress bar in `network.nos` with warning state and automatic speed throttling to 1 Mbps upon exceeding the monthly quota.
+
+- **SuperBank Add Funds Deposit Feature (`superbank.nos.js`, `os.js`)**:
+  - Instant direct deposit input field and "+ Add Funds" action in SuperBank portal.
+  - Increases checking balance, registers deposit transactions in history, and updates global OS state.
+
+- **Wipe Fresh Gamesafe Preservation (`wipefresh.js`, `os.js`)**:
+  - Automatic detection of active Gamesafe subscriptions during factory reset initiation.
+  - Dual wipe modes:
+    - **Delete All**: complete factory reset of all partitions.
+    - **Keep Savegame**: preserves Gamesafe app, account credentials, subscription, and game save data while clearing other apps, notes, photos, and preferences.
+
+---
+
 ## [1.1.1] - 2026-08-28
 
 ### Added

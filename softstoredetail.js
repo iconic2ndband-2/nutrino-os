@@ -1,0 +1,158 @@
+/* FILE: softstoredetail.js — SoftStore App Detail page view & download flow */
+(function() {
+  let activeInterval = null, currentContainer = null;
+
+  function renderDetail(appId, backCallback) {
+    const app = (window.CONSTANTS.APPS || []).find(a => a.id === appId);
+    if (!app || !currentContainer) return;
+
+    const isInstalled = window.os?.isAppInstalled(appId);
+    const speed = window.os?.getEffectiveSpeed() || 1;
+    const sizeMB = app.sizeMB || 10;
+    const estTimeSec = window.os?.getDownloadTime(sizeMB) || 1;
+    const estFormatted = estTimeSec < 60 ? `${estTimeSec.toFixed(1)}s` : `${(estTimeSec / 60).toFixed(1)}m`;
+    const priceLabel = app.price === 0 ? 'Free' : `$${app.price.toFixed(2)}`;
+    const sizeFormatted = sizeMB >= 1000 ? `${(sizeMB / 1000).toFixed(1)} GB` : `${sizeMB} MB`;
+
+    currentContainer.innerHTML = `
+      <div class="store-detail-root">
+        <button id="store-detail-back" class="btn-secondary" style="align-self:flex-start;min-height:32px;padding:0 10px;font-size:12px;margin-bottom:8px;">‹ All Apps</button>
+        <div class="store-detail-header">
+          <div class="store-app-icon" style="background:${app.color};width:54px;height:54px;border-radius:14px;">${app.icon}</div>
+          <div style="flex:1;">
+            <div style="font-size:17px;font-weight:700;">${app.name}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${app.developer || 'Nutrino Dev'} • v${app.version || '1.0.0'}</div>
+            <div style="font-size:13px;font-weight:700;color:#34d399;margin-top:2px;">${priceLabel}</div>
+          </div>
+        </div>
+
+        <div class="store-stat-grid">
+          <div class="store-stat-card"><span class="label">RATING</span><span class="val">⭐ ${app.rating || '4.5'}</span></div>
+          <div class="store-stat-card"><span class="label">DOWNLOADS</span><span class="val">${app.downloads || '1K+'}</span></div>
+          <div class="store-stat-card"><span class="label">SIZE</span><span class="val">${sizeFormatted}</span></div>
+          <div class="store-stat-card"><span class="label">CATEGORY</span><span class="val">${app.category || 'Utility'}</span></div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;margin:6px 0 2px;">PREVIEW SCREENSHOT</div>
+        <div class="store-screenshot-wrap">
+          <canvas id="store-app-canvas" width="280" height="150" class="store-app-canvas"></canvas>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;margin:8px 0 4px;">ABOUT THIS APP</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.4;margin-bottom:12px;">${app.description || ''}</div>
+
+        <div id="store-action-zone" style="margin-top:auto;">
+          ${isInstalled ? `
+            <div style="display:flex;gap:8px;">
+              <button id="store-launch-btn" class="btn-primary" style="flex:2;background:#10b981;">Open App</button>
+              <button id="store-uninstall-btn" class="btn-secondary" style="flex:1;color:#f87171;border-color:rgba(239,68,68,0.4);">Uninstall</button>
+            </div>
+          ` : `
+            <button id="store-buy-btn" class="btn-primary" style="width:100%;">${app.price > 0 ? `Buy for $${app.price.toFixed(2)}` : 'Install (Free)'}</button>
+          `}
+          <div id="store-dl-progress-box" class="store-progress-box" style="display:none;margin-top:8px;">
+            <div class="store-progress-label">
+              <span id="store-dl-text">Downloading... 0%</span>
+              <span id="store-dl-eta">ETA: ${estFormatted}</span>
+            </div>
+            <div class="store-progress-bar-wrap">
+              <div id="store-dl-fill-bar" class="store-progress-fill" style="width:0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    const canvas = currentContainer.querySelector('#store-app-canvas');
+    if (canvas && window.screenshots) window.screenshots.render(appId, canvas);
+
+    currentContainer.querySelector('#store-detail-back').onclick = backCallback;
+    const launchBtn = currentContainer.querySelector('#store-launch-btn');
+    if (launchBtn) launchBtn.onclick = () => window.os?.launchApp(appId);
+
+    const uninstallBtn = currentContainer.querySelector('#store-uninstall-btn');
+    if (uninstallBtn) {
+      uninstallBtn.onclick = () => {
+        const performUninstall = () => {
+          window.os?.uninstallApp(appId);
+          window.animations?.showToast?.(`Uninstalled "${app.name}" (Freed ${sizeFormatted})`);
+          renderDetail(appId, backCallback);
+        };
+
+        if (window.confirmModal) {
+          window.confirmModal.show({
+            title: `Uninstall ${app.name}?`,
+            message: `Remove ${app.name} from your device and reclaim ${sizeFormatted} storage?`,
+            icon: '🗑️',
+            confirmText: 'Uninstall',
+            cancelText: 'Keep',
+            isDestructive: true,
+            onConfirm: performUninstall
+          });
+        } else {
+          performUninstall();
+        }
+      };
+    }
+
+    const buyBtn = currentContainer.querySelector('#store-buy-btn');
+    if (buyBtn) {
+      buyBtn.onclick = () => {
+        if (app.price > 0) {
+          window.os?.purchase(`SoftStore: ${app.name}`, app.price, () => startDownload(appId, sizeMB, backCallback));
+        } else {
+          startDownload(appId, sizeMB, backCallback);
+        }
+      };
+    }
+  }
+
+  function startDownload(appId, sizeMB, backCallback) {
+    const buyBtn = currentContainer.querySelector('#store-buy-btn');
+    const progBox = currentContainer.querySelector('#store-dl-progress-box');
+    const fillBar = currentContainer.querySelector('#store-dl-fill-bar');
+    const progText = currentContainer.querySelector('#store-dl-text');
+    const progEta = currentContainer.querySelector('#store-dl-eta');
+
+    if (buyBtn) buyBtn.style.display = 'none';
+    if (progBox) progBox.style.display = 'block';
+
+    const estSec = window.os?.getDownloadTime(sizeMB) || 1;
+    const totalMs = Math.max(900, Math.min(60000, estSec * 1000));
+    let elapsed = 0;
+    window.os?.addDataUsage(sizeMB);
+
+    if (activeInterval) clearInterval(activeInterval);
+    activeInterval = setInterval(() => {
+      elapsed += 100;
+      const pct = Math.min(100, Math.round((elapsed / totalMs) * 100));
+      const downloadedUnits = sizeMB >= 1000
+        ? `${((elapsed / totalMs) * (sizeMB / 1000)).toFixed(2)} GB / ${(sizeMB / 1000).toFixed(0)} GB`
+        : `${Math.round((elapsed / totalMs) * sizeMB)} MB / ${sizeMB} MB`;
+      const remSec = Math.max(0, ((totalMs - elapsed) / 1000)).toFixed(1);
+
+      if (fillBar) fillBar.style.width = `${pct}%`;
+      if (progText) progText.textContent = pct < 100 ? `${downloadedUnits} (${pct}%)` : 'Installing...';
+      if (progEta) progEta.textContent = `ETA: ${remSec}s`;
+
+      if (elapsed >= totalMs) {
+        clearInterval(activeInterval); activeInterval = null;
+        setTimeout(() => {
+          window.os?.installApp(appId);
+          window.animations?.showToast?.(`${appId} installed successfully!`);
+          renderDetail(appId, backCallback);
+        }, 400);
+      }
+    }, 100);
+  }
+
+  window.softstoreDetail = {
+    show(container, appId, onBack) {
+      currentContainer = container;
+      renderDetail(appId, onBack);
+    },
+    unmount() {
+      if (activeInterval) { clearInterval(activeInterval); activeInterval = null; }
+      currentContainer = null;
+    }
+  };
+})();

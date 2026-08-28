@@ -29,6 +29,13 @@
               <div class="bookmark-desc">Checking account, deposits & transfers</div>
             </div>
           </div>
+          <div class="browser-bookmark-card" data-url="makeracingstudio.nos">
+            <div class="bookmark-icon">🏎️</div>
+            <div class="bookmark-details">
+              <div class="bookmark-name">makeracingstudio.nos</div>
+              <div class="bookmark-desc">Nutrino Games developer portal & SE</div>
+            </div>
+          </div>
         </div>
       </div>`;
   }
@@ -39,7 +46,7 @@
         <div class="browser-error-icon">⚠️</div>
         <h3>Site Not Found</h3>
         <p>The address <strong>${url}</strong> could not be resolved on the local network.</p>
-        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: network.nos, superbank.nos</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: network.nos, superbank.nos, makeracingstudio.nos</p>
       </div>`;
   }
 
@@ -57,7 +64,7 @@
     if (!contentArea) return;
 
     if (loadingBar) { loadingBar.style.width = '20%'; loadingBar.style.opacity = '1'; }
-    const speed = window.os.state.internetSpeed || 1;
+    const speed = window.os?.getEffectiveSpeed ? window.os.getEffectiveSpeed() : 1;
     const delay = Math.max(150, Math.min(1200, Math.round(350 + (250 / speed))));
 
     if (activeTimer) clearTimeout(activeTimer);
@@ -66,7 +73,7 @@
         loadingBar.style.width = '100%';
         setTimeout(() => { loadingBar.style.opacity = '0'; loadingBar.style.width = '0%'; }, 150);
       }
-      window.os.addDataUsage(0.2);
+      window.os?.addDataUsage(0.2);
       if (norm === 'home') {
         contentArea.innerHTML = renderStartPage();
         contentArea.querySelectorAll('.browser-bookmark-card').forEach(c => {
@@ -78,6 +85,9 @@
       } else if (norm === 'superbank.nos') {
         contentArea.innerHTML = window.superbankNos.getHtml();
         window.superbankNos.bindEvents(contentArea, () => loadPage('superbank.nos', false));
+      } else if (norm === 'makeracingstudio.nos') {
+        contentArea.innerHTML = window.makeRacingStudioNos.getHtml();
+        window.makeRacingStudioNos.bindEvents(contentArea, () => loadPage('makeracingstudio.nos', false));
       } else {
         contentArea.innerHTML = renderNotFound(norm);
       }

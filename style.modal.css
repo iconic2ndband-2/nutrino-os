@@ -1,4 +1,4 @@
-/* FILE: style.modal.css — Modal dialogs, purchase flows, and About Device styling */
+/* FILE: style.modal.css — Modal dialogs, purchase flows, confirmation alerts and About Device styling */
 .settings-tab-bar { display: flex; gap: 8px; margin-bottom: 4px; }
 .settings-tab-btn { flex: 1; height: 36px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
 .settings-tab-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
@@ -17,8 +17,15 @@
 .storage-bar-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 999px; transition: width 0.3s ease; }
 .storage-breakdown-list { display: flex; flex-direction: column; gap: 6px; }
 .breakdown-item { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); padding: 4px 0; border-bottom: 1px dashed rgba(255,255,255,0.06); }
-.purchase-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease; }
-.purchase-modal-card { width: 100%; max-width: 320px; background: #171822; border: 1px solid rgba(255,255,255,0.18); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+
+/* Purchase & Confirmation Modals */
+.purchase-modal-backdrop, .confirm-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease; }
+.purchase-modal-card, .confirm-modal-card { width: 100%; max-width: 320px; background: #171822; border: 1px solid rgba(255,255,255,0.18); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+.confirm-modal-icon { font-size: 38px; margin-bottom: 10px; }
+.confirm-modal-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+.confirm-modal-msg { font-size: 12px; color: #94a3b8; line-height: 1.45; margin-bottom: 18px; text-align: center; }
+.confirm-modal-actions { display: flex; gap: 10px; width: 100%; }
+
 .purchase-step-indicator { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #818cf8; margin-bottom: 8px; }
 .purchase-item-icon { width: 50px; height: 50px; border-radius: 50%; background: rgba(99,102,241,0.15); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 8px; }
 .purchase-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 2px; }
