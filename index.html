@@ -1,0 +1,53 @@
+<!-- FILE: index.html — Main entry point and boot sequence for Nutrino OS v1.1.1 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nutrino OS v1.1.1</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.modal.css">
+</head>
+<body>
+  <div id="os-root" class="os-device">
+    <div id="os-brightness-overlay" class="os-brightness-overlay"></div>
+    <div id="os-statusbar-container" class="os-statusbar-container"></div>
+    <main id="os-viewport" class="os-viewport"></main>
+    <div id="os-toast" class="os-toast" aria-live="polite"></div>
+  </div>
+
+  <script src="constants.js"></script>
+  <script src="store.js"></script>
+  <script src="deviceinfo.js"></script>
+  <script src="purchasemodal.js"></script>
+  <script src="theme.js"></script>
+  <script src="animations.js"></script>
+  <script src="touch.js"></script>
+  <script src="statusbar.js"></script>
+  <script src="clockapp.js"></script>
+  <script src="calculatorapp.js"></script>
+  <script src="aboutdevice.js"></script>
+  <script src="settingsapp.js"></script>
+  <script src="notesapp.js"></script>
+  <script src="cameraapp.js"></script>
+  <script src="musicapp.js"></script>
+  <script src="galleryapp.js"></script>
+  <script src="weatherapp.js"></script>
+  <script src="network.nos.js"></script>
+  <script src="superbank.nos.js"></script>
+  <script src="browser.js"></script>
+  <script src="softstore.js"></script>
+  <script src="wipefresh.js"></script>
+  <script src="homescreen.js"></script>
+  <script src="lockscreen.js"></script>
+  <script src="router.js"></script>
+  <script src="os.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.os && typeof window.os.boot === 'function') {
+        window.os.boot();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+/* FILE: style.css — Global styles, themes, and application layouts */
+:root {
+  --os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --wallpaper-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  --bg-surface: #171822; --bg-app: #0b0c12; --text-main: #f8fafc; --text-muted: #94a3b8;
+  --accent: #6366f1; --accent-hover: #4f46e5; --card-bg: rgba(255, 255, 255, 0.06);
+  --border-color: rgba(255, 255, 255, 0.1); --btn-radius: 14px;
+}
+body.light-theme {
+  --bg-surface: #f1f5f9; --bg-app: #ffffff; --text-main: #0f172a; --text-muted: #64748b;
+  --card-bg: rgba(0, 0, 0, 0.04); --border-color: rgba(0, 0, 0, 0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #050505; font-family: var(--os-font); display: flex; align-items: center; justify-content: center; }
+.os-device { width: 100%; max-width: 380px; height: 100%; max-height: 800px; background: var(--wallpaper-bg); background-size: cover; background-position: center; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 80px rgba(79, 70, 229, 0.18), 0 30px 60px -12px rgba(0, 0, 0, 0.9); border-radius: 46px; border: 10px solid #18181b; }
+@media (max-width: 480px), (max-height: 800px) { .os-device { max-width: 100%; max-height: 100%; border-radius: 0; border: none; } }
+.os-brightness-overlay { position: absolute; inset: 0; background: #000; pointer-events: none; opacity: 0; z-index: 999; transition: opacity 0.15s ease; }
+.os-statusbar-container { height: 44px; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: #fff; font-size: 11px; font-weight: 600; z-index: 100; }
+.status-battery { display: flex; align-items: center; gap: 5px; }
+.battery-icon { width: 20px; height: 10px; border: 1.5px solid rgba(255,255,255,0.6); border-radius: 3px; padding: 1px; display: flex; }
+.battery-fill { height: 100%; background: #22c55e; border-radius: 1.5px; }
+.status-network-speed { font-size: 10px; color: #a5b4fc; background: rgba(99,102,241,0.2); padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(99,102,241,0.3); }
+.os-viewport { flex: 1; position: relative; overflow: hidden; width: 100%; height: calc(100% - 44px); }
+.screen-view { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.lockscreen-root { align-items: center; justify-content: space-between; padding: 50px 20px 30px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.6); }
+.lock-time { font-size: 64px; font-weight: 200; letter-spacing: -2px; line-height: 1; }
+.lock-date { font-size: 15px; font-weight: 400; opacity: 0.85; margin-top: 8px; }
+.lock-swipe-area { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: grab; padding: 16px; min-height: 64px; }
+.lock-handle { width: 110px; height: 4px; background: rgba(255,255,255,0.6); border-radius: 999px; }
+.homescreen-root { justify-content: space-between; padding: 16px 18px 24px; }
+.app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 12px; }
+.app-icon-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-height: 64px; }
+.app-icon-badge { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.35); transition: transform 0.15s ease; }
+.app-icon-badge:active { transform: scale(0.92); }
+.app-icon-label { font-size: 11px; font-weight: 500; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); text-align: center; }
+.home-dock { background: rgba(255,255,255,0.1); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.18); border-radius: 30px; padding: 10px 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.app-screen { background: var(--bg-app); color: var(--text-main); z-index: 50; display: flex; flex-direction: column; }
+.app-header { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2); }
+.back-btn { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--accent); font-size: 15px; font-weight: 600; cursor: pointer; }
+.app-title { font-size: 16px; font-weight: 600; }
+.app-content { flex: 1; overflow-y: auto; padding: 14px; position: relative; }
+.btn-primary { min-height: 40px; padding: 0 16px; border-radius: var(--btn-radius); background: var(--accent); color: #fff; font-weight: 600; font-size: 13px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-primary:active { transform: scale(0.98); }
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; height: 100%; }
+.calc-btn { min-height: 48px; border-radius: 14px; border: 1px solid var(--border-color); font-size: 20px; font-weight: 500; cursor: pointer; background: var(--card-bg); color: var(--text-main); }
+.calc-btn.op { background: #f59e0b; color: #fff; border: none; }
+.calc-btn.action { background: #3f3f46; color: #fff; border: none; }
+.calc-btn.equal { background: #10b981; color: #fff; border: none; grid-column: span 2; }
+.calc-display { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; text-align: right; margin-bottom: 12px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-end; }
+.notes-item, .settings-group { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer; min-height: 54px; }
+.wallpaper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.wallpaper-card { height: 60px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; }
+.wallpaper-card.active { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+.camera-preview-box { width: 100%; height: 240px; background: #000; border-radius: 16px; overflow: hidden; position: relative; border: 1px solid var(--border-color); }
+.weather-hero { text-align: center; padding: 16px 0; }
+.weather-temp { font-size: 50px; font-weight: 300; }
+.forecast-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.forecast-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; min-height: 40px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.gallery-thumb { aspect-ratio: 1; border-radius: 10px; object-fit: cover; width: 100%; cursor: pointer; }
+.os-toast { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(15,15,20,0.95); border: 1px solid rgba(255,255,255,0.18); color: #fff; padding: 8px 16px; border-radius: 999px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 1000; }
+.os-toast.show { opacity: 1; }
+/* Browser & Sites */
+.browser-app-root { display: flex; flex-direction: column; height: 100%; }
+.browser-nav-toolbar { display: flex; align-items: center; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+.browser-nav-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.browser-address-bar { flex: 1; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); padding: 0 10px; font-size: 12px; outline: none; }
+.browser-progress-track { height: 3px; width: 100%; background: transparent; overflow: hidden; }
+.browser-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.2s ease, opacity 0.2s; }
+.browser-page-viewport { flex: 1; overflow-y: auto; padding-top: 8px; }
+.browser-start-page, .browser-error-page { text-align: center; padding: 24px 10px; }
+.browser-hero-icon, .browser-error-icon { font-size: 40px; margin-bottom: 8px; }
+.browser-start-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.browser-start-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.browser-bookmarks-grid { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.browser-bookmark-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; cursor: pointer; }
+.bookmark-icon { font-size: 24px; }
+.bookmark-name { font-size: 14px; font-weight: 600; color: #818cf8; }
+.bookmark-desc { font-size: 11px; color: var(--text-muted); }
+/* ISP Network & Banking */
+.net-header, .bank-header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+.net-logo, .bank-logo { font-size: 15px; font-weight: 700; }
+.net-tagline, .bank-tagline { font-size: 11px; color: var(--text-muted); }
+.net-status-banner { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.net-stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 6px; text-align: center; }
+.net-stat-label { display: block; font-size: 9px; color: var(--text-muted); }
+.net-stat-val { font-size: 11px; font-weight: 700; color: #38bdf8; }
+.net-calc-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; }
+.net-calc-row { display: flex; gap: 8px; margin-top: 6px; }
+.net-input, .bank-input { flex: 1; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: #fff; padding: 0 10px; font-size: 13px; outline: none; }
+.net-calc-res { font-size: 11px; color: #a3e635; margin-top: 6px; font-weight: 500; }
+.net-plans-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.net-plan-card { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; }
+.net-plan-card.active-plan { border-color: #38bdf8; background: rgba(56,189,248,0.1); }
+.net-plan-name { font-size: 13px; font-weight: 600; }
+.net-plan-speed { font-size: 11px; color: #38bdf8; }
+.net-plan-price { font-size: 11px; color: var(--text-muted); }
+/* SuperBank */
+.bank-balance-card { background: linear-gradient(135deg, #1e1b4b, #312e81); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 14px; text-align: center; margin-bottom: 12px; }
+.bank-bal-label { font-size: 11px; color: #cbd5e1; }
+.bank-bal-value { display: block; font-size: 32px; font-weight: 700; color: #fff; margin: 4px 0; }
+.bank-acct-no { font-size: 10px; color: #94a3b8; }
+.bank-actions-group { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+.bank-tabs-nav { display: flex; gap: 6px; margin-bottom: 10px; }
+.bank-tab-btn { flex: 1; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+.bank-tab-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
+.bank-exec-btn { width: 100%; margin-top: 8px; }
+.bank-tx-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.bank-tx-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; }
+.bank-tx-type { font-weight: 600; margin-right: 6px; }
+.bank-tx-desc { color: var(--text-muted); font-size: 10px; }
+.bank-tx-date { display: block; font-size: 9px; color: var(--text-muted); }
+.bank-tx-credit { color: #22c55e; font-weight: 700; }
+.bank-tx-debit { color: #f87171; font-weight: 700; }
+.bank-empty-tx { text-align: center; color: var(--text-muted); font-size: 12px; padding: 14px 0; }
+/* SoftStore & Wipe */
+.store-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+.store-brand { font-size: 15px; font-weight: 800; color: #10b981; letter-spacing: 0.5px; }
+.store-tabs { display: flex; gap: 6px; }
+.store-tab { padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-muted); font-size: 11px; cursor: pointer; }
+.store-tab.active { background: #10b981; color: #fff; border-color: transparent; font-weight: 600; }
+.store-featured-banner { background: linear-gradient(135deg, #064e3b, #047857); border-radius: 14px; padding: 12px; margin-bottom: 12px; color: #fff; }
+.store-banner-tag { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #a7f3d0; margin-bottom: 2px; }
+.store-banner-title { font-size: 16px; font-weight: 700; }
+.store-banner-desc { font-size: 11px; color: #d1fae5; margin-top: 2px; }
+.store-app-card { display: flex; gap: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; }
+.store-app-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.store-app-meta { flex: 1; }
+.store-app-name { font-size: 14px; font-weight: 700; }
+.store-app-specs { font-size: 11px; color: #10b981; margin: 2px 0; }
+.store-app-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+.store-progress-box { margin-top: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px; }
+.store-progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px; }
+.store-progress-bar-wrap { height: 6px; width: 100%; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; }
+.store-progress-fill { height: 100%; background: #10b981; transition: width 0.1s linear; }
+.store-lib-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; }
+.store-app-icon-sm { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.wipe-container { display: flex; flex-direction: column; height: 100%; align-items: center; text-align: center; padding: 16px 8px; }
+.wipe-icon { font-size: 48px; margin-bottom: 6px; }
+.wipe-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.wipe-warning-card { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); border-radius: 14px; padding: 12px; text-align: left; font-size: 11px; margin-bottom: 14px; }
+.wipe-list { margin-left: 18px; margin-top: 6px; line-height: 1.6; }
+.wipe-prompt { font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+.wipe-actions { display: flex; gap: 10px; width: 100%; }
+.wipe-actions button { flex: 1; }
+.wipe-spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #ef4444; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
