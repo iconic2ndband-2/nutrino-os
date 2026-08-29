@@ -23,19 +23,14 @@
         const activeWp = wallpapers.find(w => w.id === currentUser.activeWallpaperId) || wallpapers[0];
         if (sub.autoRenew && activeWp) {
           const cost = activeWp.price;
-          // Silent pay renewal deduction
           const ok = window.os?.deductBank?.(cost, `3DPapers Auto-Renew: ${activeWp.name}`);
           if (ok) {
             currentUser.totalSpending = (currentUser.totalSpending || 0) + cost;
             sub.secondsRemaining = activeWp.duration;
             saveUser(currentUser);
             if (currentContainer && currentUser) renderMain();
-          } else {
-            sub.active = false; sub.secondsRemaining = 0; saveUser(currentUser);
-          }
-        } else {
-          sub.active = false; sub.secondsRemaining = 0; saveUser(currentUser);
-        }
+          } else { sub.active = false; sub.secondsRemaining = 0; saveUser(currentUser); }
+        } else { sub.active = false; sub.secondsRemaining = 0; saveUser(currentUser); }
       }
     }, 1000);
   }
@@ -48,6 +43,7 @@
         currentUser = null; localStorage.removeItem(K_SESSION);
         if (renewInterval) { clearInterval(renewInterval); renewInterval = null; }
         if (window.threeDPapersWallpapers) window.threeDPapersWallpapers.stop();
+        window.threeDPapersUpdate?.clearTimer?.();
         window.threeDPapersAuth.render(currentContainer, (u) => { currentUser = u; saveUser(u); renderMain(); });
       },
       onPurchaseRequest: (wp, host) => {
@@ -58,8 +54,22 @@
           currentUser.subscription = { autoRenew: true, active: true, secondsRemaining: payRes.duration };
           saveUser(currentUser);
           startDurationTimer();
-          renderMain();
+          // Open assignment dialog
+          if (window.threeDPapersAssign) {
+            window.threeDPapersAssign.open(currentContainer, wp, currentUser, (u) => {
+              saveUser(u); renderMain();
+            });
+          } else {
+            renderMain();
+          }
         });
+      },
+      onAssignRequest: (wp) => {
+        if (window.threeDPapersAssign) {
+          window.threeDPapersAssign.open(currentContainer, wp, currentUser, (u) => {
+            saveUser(u); renderMain();
+          });
+        }
       }
     });
   }
@@ -72,12 +82,14 @@
         currentUser = window.gamesafe?.load?.('3dpapers', sessionUser);
         startDurationTimer();
         renderMain();
+        window.threeDPapersUpdate?.check?.(container, () => renderMain());
       } else {
         window.threeDPapersAuth.render(container, (u) => {
           currentUser = u;
           saveUser(u);
           startDurationTimer();
           renderMain();
+          window.threeDPapersUpdate?.check?.(container, () => renderMain());
         });
       }
     },
@@ -85,6 +97,7 @@
     unmount() {
       if (renewInterval) { clearInterval(renewInterval); renewInterval = null; }
       if (window.threeDPapersWallpapers) window.threeDPapersWallpapers.stop();
+      window.threeDPapersUpdate?.clearTimer?.();
       currentContainer = null;
     }
   };

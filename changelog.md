@@ -2,6 +2,44 @@
 
 All notable changes to the Nutrino OS project will be documented in this file.
 
+## [1.2.3] - 2026-08-29
+
+### Added
+- **Home Screen Pagination Engine (`homescreen.js`, `style.css`)**:
+  - **Dock Removal**: Completely removed the persistent bottom dock to maximize application grid space and align with the paginated layout.
+  - **4×3 Grid Pagination (12 Apps Per Page)**: Home screen grid now cleanly divides applications across pages with exactly 12 apps per page (4 columns × 3 rows).
+  - **Horizontal Swipe Navigation**: Smooth left and right swipe gestures to seamlessly paginate between home screen pages with minimum 50px threshold and vertical swipe rejection.
+  - **Page Indicator Dots**: Glowing indicator dots at the bottom displaying active page state with direct-tap jump navigation.
+  - **Alphabetized & Categorized App Sorting**: Applications are logically structured with System apps first (Phone, Messages, Clock, Calculator, Settings, Notes, Camera, Music, Gallery, Weather, Browser, SoftStore), followed by User-Installed apps, both ordered strictly alphabetically.
+- **3DPapers Cumulative Storage & Download Accounting (`constants.js`, `softstore.js`, `softstoredetail.js`)**:
+  - **Total App Size Display**: SoftStore Featured catalog and Detail page prominently display the comprehensive **2.7 GB** total device footprint (2.3 GB v1.0.0 base + 400 MB v2.0.0 update).
+  - **Accurate Download Accounting**: Differentiates between fresh 2.7 GB full installation, incremental 400 MB updates, and 2.3 GB v1.0.0 rollbacks with real-time ISP bandwidth simulation.
+
+---
+
+## [1.2.2] - 2026-08-29
+
+### Added
+- **3DPapers v2.0.0 Live Upgrade (`3dpapers.update.js`, `3dpapers.assign.js`, `3dpapers.settings.js`, `3dpapers.wallpapers.js`)**:
+  - **In-App 5-Second Update Detection**: Automatically prompts user to download the 400 MB v2.0.0 update package 5 seconds after launching 3DPapers v1.0.0, with "Remind Later" and "Ignore" actions that link to SoftStore badges.
+  - **Wallpaper Assignment Engine**: Choose whether to apply 3D live wallpapers to **Home Screen Only**, **Lock Screen Only**, or **Both Screens**.
+  - **Multi-Buy & Multi-Assign**: Full support for assigning distinct live 3D wallpapers to Home Screen (e.g. *Nebula Drift*) and Lock Screen (e.g. *Ocean Depths*), persisted in Gamesafe vault.
+  - **Multi-Instance 3D Wallpaper Engine (`3dpapers.wallpapers.js`)**: Refactored to support concurrent rendering instances (`createInstance()`) for both Lock Screen and Home Screen canvases with independent animation loops.
+  - **Performance Optimization & Visibility Pausing**: Intelligent lifecycle methods (`pause()`, `resume()`, `stop()`) that halt WebGL rendering loops whenever the respective screen is unmounted or in the background, conserving battery and GPU cycles.
+  - **Lock Screen 3D Integration (`lockscreen.js`)**: Mounted interactive 3D WebGL background canvas for the lock screen with smooth swipe-to-unlock gesture coordination.
+  - **Home Screen 3D Integration (`homescreen.js`)**: Background 3D WebGL canvas support with live rendering behind dynamic application grid and dock icons.
+- **SoftStore Rollback Engine (`softstore.rollback.js`, `softstoredetail.versions.js`, `os.versions.js`)**:
+  - **3DPapers v1.0.0 Rollback**: Dedicated "Rollback" action in SoftStore version history allowing downgrade from v2.0.0 back to v1.0.0.
+  - **Full Package Re-download (2.3 GB)**: Real-time download progress modal with ISP-scaled bandwidth simulation and data usage accounting.
+  - **Gamesafe Vault Data Preservation**: Completely preserves all multi-account profiles, usernames, active subscriptions, and user settings across rollbacks and version changes.
+- **OS Kernel Versioning & Wallpaper Methods (`os.js`, `os.versions.js`)**:
+  - Added `os.applyWallpaper(screen, wallpaperId)` to configure `nos_wp_home_3d` and `nos_wp_lock_3d`.
+  - Added `os.getWallpaper3D(screen)` to query active 3D wallpaper per screen.
+  - Added `os.rollbackApp(appId, targetVersion)` to handle safe version rollbacks.
+  - Added `os.startUpdate(appId, targetVersion)` and `os.addUpdateBadge(appId)` for unified update state management.
+
+---
+
 ## [1.2.1] - 2026-08-29
 
 ### Added

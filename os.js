@@ -33,31 +33,22 @@
     setWallpaper(id) { this.state.settings.wallpaper = id; window.theme?.setWallpaper(id); },
     setBrightness(lvl) { this.state.settings.brightness = lvl; window.theme?.setBrightness(lvl); },
     getDeviceInfo() { return window.deviceInfo ? window.deviceInfo.getSpecs() : (window.CONSTANTS?.DEVICE_SPECS || {}); },
-    async getStorageStats() {
-      return window.deviceInfo ? await window.deviceInfo.getStorageStats() : {
-        totalCapacityGB: 128, totalUsedGB: 8.5, freeGB: 119.5, usedPercentage: 6.6, systemGB: 8.5,
-        userStats: { notesCount: 0, photosCount: 0, notesKB: 0, photosMB: 0 }, appsMB: 0
-      };
-    },
+    async getStorageStats() { return window.deviceInfo ? await window.deviceInfo.getStorageStats() : null; },
 
-    getCPUUsage() { return window.osData ? window.osData.getCPUUsage() : 35; },
-    getGPUUsage() { return window.osData ? window.osData.getGPUUsage() : 25; },
+    getCPUUsage() { return window.osData ? window.osData.getCPUUsage() : 35; }, getGPUUsage() { return window.osData ? window.osData.getGPUUsage() : 25; },
     getRAMUsage() { return window.osData ? window.osData.getRAMUsage() : { used: 1.8, free: 2.2, total: 4.0, percentage: 45 }; },
     getStorageBreakdown() { return window.osData ? window.osData.getStorageBreakdown() : null; },
-    getCPUTemp() { return window.osData ? window.osData.getCPUTemp() : 48; },
-    getGPUTemp() { return window.osData ? window.osData.getGPUTemp() : 42; },
-    getBatteryTemp() { return window.osData ? window.osData.getBatteryTemp() : 32; },
-    getUptime() { return window.osData ? window.osData.getUptime() : 120; },
+    getCPUTemp() { return window.osData ? window.osData.getCPUTemp() : 48; }, getGPUTemp() { return window.osData ? window.osData.getGPUTemp() : 42; },
+    getBatteryTemp() { return window.osData ? window.osData.getBatteryTemp() : 32; }, getUptime() { return window.osData ? window.osData.getUptime() : 120; },
     getDeviceAge() { return window.osData ? window.osData.getDeviceAge() : 42; },
     getBatteryStatus() { return window.osData ? window.osData.getBatteryStatus() : { percentage: 85, charging: false, health: 'Good' }; },
-    getSignalStrength() { return window.osData ? window.osData.getSignalStrength() : 90; },
-    getWiFiSignal() { return window.osData ? window.osData.getWiFiSignal() : 95; },
+    getSignalStrength() { return window.osData ? window.osData.getSignalStrength() : 90; }, getWiFiSignal() { return window.osData ? window.osData.getWiFiSignal() : 95; },
     getBrightness() { return window.osData ? window.osData.getBrightness() : (this.state.settings.brightness || 100); },
 
     isWebGLSupported() { return window.osGpu?.isWebGLSupported() ?? true; },
     isWebGL2Supported() { return window.osGpu?.isWebGL2Supported() ?? true; },
     isWebGPUSupported() { return window.osGpu?.isWebGPUSupported() ?? false; },
-    getGPUInfo() { return window.osGpu?.getGPUInfo() || (this.getDeviceInfo().gpu || '2T-PEX'); },
+    getGPUInfo() { return window.osGpu?.getGPUInfo() || '2T-PEX'; },
     canRun3D() { return window.osGpu ? window.osGpu.canRun3D() : true; },
 
     checkForUpdates() { return window.osVersions ? window.osVersions.checkForUpdates() : []; },
@@ -66,6 +57,21 @@
     isUpdateAvailable(id) { return window.osVersions ? window.osVersions.isUpdateAvailable(id) : false; },
     getInstalledVersion(id) { return window.osVersions ? window.osVersions.getInstalledVersion(id) : '1.0.0'; },
     installVersion(id, ver) { return window.osVersions ? window.osVersions.installVersion(id, ver) : this.installApp(id); },
+    rollbackApp(id, ver) { return window.osVersions ? window.osVersions.rollbackApp(id, ver) : this.installVersion(id, ver); },
+    startUpdate(id) { return window.osVersions ? window.osVersions.startUpdate(id) : true; },
+    addUpdateBadge(id) { if (window.osVersions) window.osVersions.addUpdateBadge(id); },
+
+    applyWallpaper(screen, wpData) {
+      const wpId = typeof wpData === 'object' ? (wpData.id || 'nebula') : (wpData || 'nebula');
+      if (screen === 'home' || screen === 'both') localStorage.setItem('nos_wp_home_3d', wpId);
+      if (screen === 'lock' || screen === 'both') localStorage.setItem('nos_wp_lock_3d', wpId);
+      const label = screen === 'both' ? 'Home & Lock' : (screen === 'home' ? 'Home' : 'Lock');
+      window.animations?.showToast?.(`3D Wallpaper applied to ${label}!`);
+      return true;
+    },
+    getWallpaper3D(screen) {
+      return screen === 'lock' ? localStorage.getItem('nos_wp_lock_3d') : localStorage.getItem('nos_wp_home_3d');
+    },
 
     setInternetPlan(planId) {
       const plan = (window.CONSTANTS.NETWORK_PLANS || []).find(p => p.id === planId);
@@ -75,7 +81,6 @@
       window.statusbar?.updateSpeed?.();
       return { success: true, message: `Subscribed to ${plan.name} (${plan.speed} Mbps)` };
     },
-
     getDataLimitMB() { const p = (window.CONSTANTS.NETWORK_PLANS || []).find(x => x.id === this.state.currentPlan); return (p ? p.dataLimitGB : 1) * 1024; },
     isDataExceeded() { return this.state.dataUsage >= this.getDataLimitMB(); },
     getEffectiveSpeed() { return this.isDataExceeded() ? 1 : (this.state.internetSpeed || 1); },
@@ -121,8 +126,7 @@
       return this.state.bankBalance;
     },
     checkGamesafeSubscription() {
-      try { return this.isAppInstalled('gamesafe') && Boolean(JSON.parse(localStorage.getItem('gamesafe_sub') || '{}')?.isActive); }
-      catch (e) { return false; }
+      try { return this.isAppInstalled('gamesafe') && Boolean(JSON.parse(localStorage.getItem('gamesafe_sub') || '{}')?.isActive); } catch (e) { return false; }
     },
     resetFactory(keepGamesafe = false) {
       const gKeys = ['gamesafe_user', 'gamesafe_users', 'gamesafe_sub', 'gamesafe_saves', 'gamesafe_connections', 'gamesafe_db'];

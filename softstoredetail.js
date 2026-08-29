@@ -12,11 +12,12 @@
     const latestObj = window.os?.getLatestVersion ? window.os.getLatestVersion(appId) : null;
     const latestVer = latestObj?.version || '1.0.0';
 
-    const sizeMB = app.sizeMB || 10;
-    const estTimeSec = window.os?.getDownloadTime(sizeMB) || 1;
+    const totalSizeMB = window.CONSTANTS.APP_TOTAL_SIZE?.[appId] || app.totalSizeMB || app.sizeMB || 10;
+    const dlSizeMB = isInstalled ? (latestObj?.size || app.sizeMB || 10) : totalSizeMB;
+    const estTimeSec = window.os?.getDownloadTime(dlSizeMB) || 1;
     const estFormatted = estTimeSec < 60 ? `${estTimeSec.toFixed(1)}s` : `${(estTimeSec / 60).toFixed(1)}m`;
     const priceLabel = app.price === 0 ? 'Free' : `$${app.price.toFixed(2)}`;
-    const sizeFormatted = sizeMB >= 1000 ? `${(sizeMB / 1000).toFixed(1)} GB` : `${sizeMB} MB`;
+    const sizeFormatted = totalSizeMB >= 1000 ? `${(totalSizeMB / 1000).toFixed(1)} GB` : `${totalSizeMB} MB`;
 
     currentContainer.innerHTML = `
       <div class="store-detail-root">
@@ -86,8 +87,8 @@
     const buyBtn = currentContainer.querySelector('#store-buy-btn');
     if (buyBtn) {
       buyBtn.onclick = () => {
-        if (app.price > 0) window.os?.purchase(`SoftStore: ${app.name}`, app.price, () => startDownload(appId, sizeMB, backCallback, latestVer));
-        else startDownload(appId, sizeMB, backCallback, latestVer);
+        if (app.price > 0) window.os?.purchase(`SoftStore: ${app.name}`, app.price, () => startDownload(appId, dlSizeMB, backCallback, latestVer));
+        else startDownload(appId, dlSizeMB, backCallback, latestVer);
       };
     }
 

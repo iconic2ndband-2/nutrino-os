@@ -38,7 +38,8 @@
     const cards = apps.map(app => {
       const isInstalled = window.os?.isAppInstalled(app.id);
       const priceText = app.price === 0 ? 'Free' : `$${app.price.toFixed(2)}`;
-      const sizeText = (app.sizeMB || 10) >= 1000 ? `${(app.sizeMB / 1000).toFixed(0)} GB` : `${app.sizeMB} MB`;
+      const totalMB = window.CONSTANTS.APP_TOTAL_SIZE?.[app.id] || app.totalSizeMB || app.sizeMB || 10;
+      const sizeText = totalMB >= 1000 ? `${(totalMB / 1000).toFixed(1)} GB` : `${totalMB} MB`;
       return `
         <div class="store-app-card store-clickable-card" data-appid="${app.id}">
           <div class="store-app-icon" style="background:${app.color};width:46px;height:46px;border-radius:12px;">${app.icon}</div>
@@ -70,20 +71,24 @@
     if (installedApps.length === 0) {
       return `<div class="bank-empty-tx" style="margin-top:24px;">No downloaded apps yet. Check Featured!</div>`;
     }
-    const items = installedApps.map(app => `
+    const items = installedApps.map(app => {
+      const totalMB = window.CONSTANTS.APP_TOTAL_SIZE?.[app.id] || app.totalSizeMB || app.sizeMB || 10;
+      const sizeText = totalMB >= 1000 ? `${(totalMB / 1000).toFixed(1)} GB` : `${totalMB} MB`;
+      return `
       <div class="store-lib-item" style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <div class="store-app-icon-sm" style="background:${app.color};width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">${app.icon}</div>
           <div>
             <div style="font-weight:600;font-size:13px;">${app.name}</div>
-            <div style="font-size:11px;color:var(--text-muted);">${app.sizeMB >= 1000 ? (app.sizeMB / 1000) + ' GB' : app.sizeMB + ' MB'} • v${window.os?.getInstalledVersion?.(app.id) || app.version || '1.0.0'}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${sizeText} • v${window.os?.getInstalledVersion?.(app.id) || app.version || '1.0.0'}</div>
           </div>
         </div>
         <div style="display:flex;gap:6px;">
           <button class="btn-primary store-lib-launch" data-launchid="${app.id}" style="min-height:32px;padding:0 10px;background:#10b981;font-size:11px;">Launch</button>
           <button class="btn-secondary store-lib-del" data-delid="${app.id}" style="min-height:32px;padding:0 8px;font-size:11px;color:#f87171;border-color:rgba(239,68,68,0.4);">Delete</button>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     return `<div class="store-lib-list"><div class="store-section-title" style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Installed Applications (${installedApps.length})</div>${items}</div>`;
   }
 
@@ -103,7 +108,7 @@
         const appId = btn.dataset.delid;
         const app = (window.CONSTANTS.APPS || []).find(a => a.id === appId);
         const name = app ? app.name : appId;
-        const sizeMB = app ? app.sizeMB : 10;
+        const sizeMB = window.CONSTANTS.APP_TOTAL_SIZE?.[appId] || app?.totalSizeMB || app?.sizeMB || 10;
         const sizeFormatted = sizeMB >= 1000 ? `${(sizeMB / 1000).toFixed(1)} GB` : `${sizeMB} MB`;
 
         const performUninstall = () => {
