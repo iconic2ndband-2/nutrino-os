@@ -1,6 +1,7 @@
 /* FILE: os.versions.js — App versioning, update check engine, and multi-version installer */
 (function() {
   const VER_PREFIX = 'nos_app_ver_';
+  const scheduledTimers = {};
 
   function compareVersions(v1, v2) {
     if (!v1 || !v2) return 0;
@@ -20,12 +21,21 @@
       const all = window.CONSTANTS?.APP_VERSIONS || {};
       if (all[appId] && Array.isArray(all[appId])) return all[appId];
       const app = (window.CONSTANTS?.APPS || []).find(a => a.id === appId);
-      return [{ version: app?.version || '1.0.0', date: 'Aug 2026', size: app?.sizeMB || 10, changes: ['Initial release'] }];
+      return [{ version: app?.version || '1.0.0', date: 'Aug 2026', size: app?.sizeMB || 10, totalSize: app?.totalSizeMB || app?.sizeMB || 10, file: appId + '.js', changes: ['Initial release'] }];
     },
 
     getLatestVersion(appId) {
       const versions = this.getAppVersions(appId);
-      return versions[0] || { version: '1.0.0', date: 'Aug 2026', size: 10, changes: ['Initial release'] };
+      return versions[0] || { version: '1.0.0', date: 'Aug 2026', size: 10, totalSize: 10, file: appId + '.js', changes: ['Initial release'] };
+    },
+
+    getActiveVersion(appId) {
+      return this.getInstalledVersion(appId);
+    },
+
+    setActiveVersion(appId, version) {
+      localStorage.setItem(VER_PREFIX + appId, version);
+      return true;
     },
 
     getInstalledVersion(appId) {
@@ -57,9 +67,23 @@
       return updates;
     },
 
+    scheduleUpdateCheck(appId) {
+      if (scheduledTimers[appId]) clearTimeout(scheduledTimers[appId]);
+      scheduledTimers[appId] = setTimeout(() => {
+        if (this.isUpdateAvailable(appId)) {
+          this.addUpdateBadge(appId);
+          const appMeta = (window.CONSTANTS?.APPS || []).find(a => a.id === appId);
+          const name = appMeta ? appMeta.name : appId;
+          const latest = this.getLatestVersion(appId);
+          window.animations?.showToast?.(`Update available for ${name} (v${latest.version})`);
+        }
+      }, 5000);
+    },
+
     installVersion(appId, version) {
-      localStorage.setItem(VER_PREFIX + appId, version);
+      this.setActiveVersion(appId, version);
       if (window.os?.installApp) window.os.installApp(appId);
+      this.scheduleUpdateCheck(appId);
       return true;
     },
 

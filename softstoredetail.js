@@ -26,7 +26,7 @@
           <div class="store-app-icon" style="background:${app.color};width:54px;height:54px;border-radius:14px;">${app.icon}</div>
           <div style="flex:1;">
             <div style="font-size:17px;font-weight:700;">${app.name}</div>
-            <div style="font-size:12px;color:var(--text-muted);">${app.developer || 'Nutrino Dev'} • v${isInstalled ? installedVer : latestVer}</div>
+            <div style="font-size:12px;color:var(--text-muted);">Developer: <span style="color:var(--text-primary);font-weight:600;">${app.developer || 'Nutrino Dev'}</span> • v${isInstalled ? installedVer : latestVer}</div>
             <div style="font-size:13px;font-weight:700;color:#34d399;margin-top:2px;">${priceLabel}</div>
           </div>
         </div>

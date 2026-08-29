@@ -2,6 +2,43 @@
 
 All notable changes to the Nutrino OS project will be documented in this file.
 
+## [1.5.1] - 2026-08-29
+
+### Added
+- **Official Developer Branding Architecture (`constants.js`, `softstore.js`, `softstoredetail.js`, `settingsapp.js`)**:
+  - Registered official developer identities across the OS:
+    - **Wipe Fresh**: Developed by *Byloop*
+    - **Nitro Race & Nitro Race SE**: Developed by *RaceMakingStudio*
+    - **3DPapers**: Developed by *CoolFrost*
+    - **Gamesafe**: Developed by *WhiteGames*
+    - **Truespecs**: Developed by *Truespecs Technologies*
+  - **SoftStore Detail Integration**: App detail pages display prominent `Developer: [Name]` metadata with formatted typography.
+  - **Settings App Manager**: Added an "Apps" section in Settings displaying all installed and catalog applications, their version, and official developer affiliations.
+- **Dedicated Company Websites on Sandbox Browser (`byloop.nos.js`, `coolfrost.nos.js`, `whitegames.nos.js`, `browser.js`)**:
+  - **Byloop (`byloop.nos`)**: Dark blue/teal themed company portal with 5 interactive tabs (Home, About, Products, Support, Blog), featuring Wipe Fresh system recovery tools and direct SoftStore links.
+  - **CoolFrost (`coolfrost.nos`)**: Cool blue/purple themed studio portal with 5 interactive tabs (Home, About, Products, Support, Blog), highlighting 3DPapers real-time WebGL engine shaders and battery preservation architecture.
+  - **WhiteGames (`whitegames.nos`)**: High-contrast white/dark themed portal with 5 interactive tabs (Home, About, Products, Support, Blog), showcasing Gamesafe cloud save locking, security bulletins, and disaster recovery.
+  - **Browser Bookmark Cards & Address Bar Resolver**: Added home screen cards for all newly added `.nos` domains in the browser start page with fast, localized routing and responsive bandwidth delays.
+
+---
+
+## [1.5.0] - 2026-08-29
+
+### Added
+- **Separate Codebase Architecture Per App Version (`3dpapers.v1.js`, `3dpapers.v2.js`, `3dpapers.js`)**:
+  - **Isolated v1.0.0 Base Codebase (`3dpapers.v1.js`)**: Complete, standalone v1.0.0 application featuring 5 premium 3D wallpapers (Nebula, Ocean, City, Volcano, Aurora), 2-step authentication, Gamesafe cloud persistence, 5-step billing, and direct desktop application (hiding v2.0-only assignment modals and lockscreen 3D).
+  - **Cumulative v2.0.0 Codebase (`3dpapers.v2.js`)**: Comprehensive v2.0.0 release embedding all v1.0.0 features plus multi-screen wallpaper assignment (Home/Lock/Both), multi-buy / multi-assign capabilities, Lock Screen 3D rendering, and smart background performance pausing.
+  - **Dynamic App Version Loader (`3dpapers.js`)**: Lightweight version dispatcher that dynamically queries the OS active version state (`os.getActiveVersion('3dpapers')`) and delegates mounting and unmounting to the active version codebase.
+- **Universal 5-Second Update Scheduler (`os.js`, `os.versions.js`)**:
+  - **`os.scheduleUpdateCheck(appId)` Engine**: Triggers an automated update check 5 seconds after installing or launching any application.
+  - **In-App Toast & Modal Notifications**: Prompts user with options to "Download Update", "Remind Later", or "Ignore", seamlessly badging the SoftStore updates tab.
+- **Fresh OS Initialization Protocol**:
+  - **Latest OS Core (v1.5)**: Boots with complete Nutrino OS v1.5 kernel and device specs.
+  - **All Pre-installed Apps at v1.0.0**: All pre-installed packages start on clean v1.0.0 builds with optional upgrade paths ready on demand.
+  - **One-Active-Version Storage Accounting**: Update replaces active version with cumulative package; previous version files are retained cleanly for instantaneous or re-downloadable rollback.
+
+---
+
 ## [1.2.3] - 2026-08-29
 
 ### Added

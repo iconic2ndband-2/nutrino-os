@@ -1,14 +1,14 @@
 /* FILE: constants.js — App metadata, configurations, and icon definitions */
 window.CONSTANTS = {
-  OS_VERSION: 'Nutrino OS v1.2.3',
+  OS_VERSION: 'Nutrino OS v1.5.1',
   DB_NAME: 'NutrinoOS_DB',
   DB_VERSION: 1,
   STORES: { NOTES: 'notes', GALLERY: 'gallery' },
   DEVICE_SPECS: {
     deviceName: 'Nutrino N1',
     model: 'NOS-11',
-    osVersion: 'Nutrino OS v1.2.3',
-    buildNumber: 'NOS-1.2.3-20260829',
+    osVersion: 'Nutrino OS v1.5.1',
+    buildNumber: 'NOS-1.5.1-20260829',
     processor: '10-Core, 600MHz - 1.3GHz',
     gpu: '2T-PEX (4-core, 600MHz)',
     ram: '4GB LPDDR4',
@@ -27,43 +27,34 @@ window.CONSTANTS = {
     kernelVersion: '6.1.0-nutrino+',
     buildDate: 'August 29, 2026'
   },
+  APP_METADATA: {
+    'wipefresh': { name: 'Wipe Fresh', developer: 'Byloop', category: 'System' },
+    'nitrorace': { name: 'Nitro Race', developer: 'RaceMakingStudio', category: 'Games' },
+    'nitroracese': { name: 'Nitro Race SE', developer: 'RaceMakingStudio', category: 'Games' },
+    '3dpapers': { name: '3DPapers', developer: 'CoolFrost', category: 'Personalization' },
+    'gamesafe': { name: 'Gamesafe', developer: 'WhiteGames', category: 'Utilities' },
+    'truespecs': { name: 'Truespecs', developer: 'Truespecs Technologies', category: 'Utilities' }
+  },
   APP_VERSIONS: {
-    'wipefresh': [{ version: '1.0.0', date: 'Aug 15, 2026', size: 10.0, changes: ['Initial release'] }],
-    'nitrorace': [{ version: '1.0.0', date: 'Aug 20, 2026', size: 7.0, changes: ['Initial release'] }],
-    'nitroracese': [{ version: '1.0.0', date: 'Aug 27, 2026', size: 9.61, changes: ['Initial release'] }],
-    'gamesafe': [{ version: '1.0.0', date: 'Aug 22, 2026', size: 200.0, changes: ['Initial release'] }],
-    'truespecs': [{ version: '1.0.0', date: 'Aug 28, 2026', size: 800.0, changes: ['Initial release'] }],
+    'wipefresh': [{ version: '1.0.0', date: 'Aug 15, 2026', size: 10.0, totalSize: 10.0, file: 'wipefresh.js', changes: ['Initial release'] }],
+    'nitrorace': [{ version: '1.0.0', date: 'Aug 20, 2026', size: 7.0, totalSize: 7000.0, file: 'nitrorace.js', changes: ['Initial release'] }],
+    'nitroracese': [{ version: '1.0.0', date: 'Aug 27, 2026', size: 9.61, totalSize: 9840.64, file: 'nitroracese.js', changes: ['Initial release'] }],
+    'gamesafe': [{ version: '1.0.0', date: 'Aug 22, 2026', size: 200.0, totalSize: 200.0, file: 'gamesafe.js', changes: ['Initial release'] }],
+    'truespecs': [{ version: '1.0.0', date: 'Aug 28, 2026', size: 800.0, totalSize: 800.0, file: 'truespecsapp.js', changes: ['Initial release'] }],
     '3dpapers': [
       {
-        version: '2.0.0',
-        date: 'Aug 29, 2026',
-        size: 400.0,
-        changes: [
-          'Wallpaper assignment system (Home/Lock/Both)',
-          'Multi-buy / Multi-assign functionality',
-          'Lock screen 3D wallpaper support',
-          'Improved performance (wallpapers pause when not visible)'
-        ],
-        rollbackAvailable: true,
-        rollbackTo: '1.0.0'
+        version: '2.0.0', date: 'Aug 29, 2026', size: 400.0, totalSize: 2700.0, file: '3dpapers.v2.js',
+        changes: ['Wallpaper assignment system (Home/Lock/Both)', 'Multi-buy / Multi-assign', 'Lock screen 3D wallpaper', 'Background pausing'],
+        rollbackAvailable: true, rollbackTo: '1.0.0'
       },
       {
-        version: '1.0.0',
-        date: 'Aug 28, 2026',
-        size: 2300.0,
-        changes: [
-          'Initial release',
-          '5 premium 3D wallpapers (Nebula, Ocean, City, Volcano, Aurora)',
-          'Silent pay system',
-          'Gamesafe integration for account saves'
-        ],
+        version: '1.0.0', date: 'Aug 28, 2026', size: 2300.0, totalSize: 2300.0, file: '3dpapers.v1.js',
+        changes: ['Initial release', '5 premium 3D wallpapers', 'Silent pay system', 'Gamesafe integration'],
         rollbackAvailable: false
       }
     ]
   },
-  APP_TOTAL_SIZE: {
-    '3dpapers': 2700
-  },
+  APP_TOTAL_SIZE: { '3dpapers': 2700 },
   NETWORK_PLANS: [
     { id: 'free', name: 'Free', speed: 1, price: 0, dataLimitGB: 1 },
     { id: 'basic', name: 'Basic', speed: 10, price: 5, dataLimitGB: 50 },
@@ -85,7 +76,7 @@ window.CONSTANTS = {
   ],
   SE_GAME: {
     id: 'nitroracese', name: 'Nitro Race SE', version: '1.0.0', sizeMB: 9840.64, price: 100.00,
-    developer: 'Nutrino Games', category: 'Games', rating: 4.9, downloads: '0',
+    developer: 'RaceMakingStudio', category: 'Games', rating: 4.9, downloads: '0',
     description: 'The ultimate Nitro Race experience. 3 maps, 2 cars, and more!'
   },
   SE_MAPS: [
@@ -110,11 +101,12 @@ window.CONSTANTS = {
     { id: 'weather', name: 'Weather', color: '#06b6d4', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>' },
     { id: 'browser', name: 'Browser', color: '#6366f1', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>' },
     { id: 'softstore', name: 'SoftStore', color: '#10b981', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><circle cx="12" cy="11" r="1.5"/></svg>' },
-    { id: 'wipefresh', name: 'Wipe Fresh', color: '#ef4444', isDownloadable: true, sizeMB: 10, price: 0, version: '1.0.0', developer: 'Nutrino Labs', category: 'Utilities', rating: 4.9, downloads: '3.4K', description: 'Factory reset and system rejuvenator for Nutrino OS.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>' },
-    { id: 'nitrorace', name: 'Nitro Race', color: '#f43f5e', isDownloadable: true, sizeMB: 7000, price: 20.00, version: '1.0.0', developer: 'Nutrino Games', category: 'Games', rating: 4.5, downloads: '1.2K', description: 'High-speed racing action. Download now and hit the track!', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>' },
-    { id: 'gamesafe', name: 'Gamesafe', color: '#38bdf8', isDownloadable: true, sizeMB: 200, price: 1.99, subPrice: 0.99, subIntervalSec: 20, version: '1.0.0', developer: 'Nutrino Labs', category: 'Utilities', rating: 4.8, downloads: '856', description: 'Save your game progress. Never lose your achievements again.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>' },
-    { id: '3dpapers', name: '3DPapers', color: '#8b5cf6', isDownloadable: true, sizeMB: 2300, totalSizeMB: 2700, price: 0, version: '1.0.0', developer: 'Nutrino Labs', category: 'Personalization', rating: 4.9, downloads: '5.8K', description: 'Premium live 3D wallpaper engine with dynamic physics and lighting effects.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>' },
-    { id: 'truespecs', name: 'Truespecs', color: '#ff1493', isDownloadable: true, hideFromStore: true, sizeMB: 800, price: 0, version: '1.0.0', developer: 'Truespecs Inc.', category: 'Utilities', rating: 5.0, downloads: '14.2K', description: 'Get detailed device specs right on your home screen.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>' },
-    { id: 'nitroracese', name: 'Nitro Race SE', color: '#8b5cf6', isDownloadable: true, hideFromStore: true, sizeMB: 9840.64, price: 100.00, version: '1.0.0', developer: 'Nutrino Games', category: 'Games', rating: 4.9, downloads: '0', description: 'The ultimate Nitro Race experience. 3 maps, 2 cars, and more!', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' }
+    { id: 'wipefresh', name: 'Wipe Fresh', color: '#ef4444', isDownloadable: true, sizeMB: 10, price: 0, version: '1.0.0', developer: 'Byloop', category: 'System', rating: 4.9, downloads: '3.4K', description: 'Factory reset and system rejuvenator for Nutrino OS.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>' },
+    { id: 'nitrorace', name: 'Nitro Race', color: '#f43f5e', isDownloadable: true, sizeMB: 7000, price: 20.00, version: '1.0.0', developer: 'RaceMakingStudio', category: 'Games', rating: 4.5, downloads: '1.2K', description: 'High-speed racing action. Download now and hit the track!', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>' },
+    { id: 'gamesafe', name: 'Gamesafe', color: '#38bdf8', isDownloadable: true, sizeMB: 200, price: 1.99, subPrice: 0.99, subIntervalSec: 20, version: '1.0.0', developer: 'WhiteGames', category: 'Utilities', rating: 4.8, downloads: '856', description: 'Save your game progress. Never lose your achievements again.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>' },
+    { id: '3dpapers', name: '3DPapers', color: '#8b5cf6', isDownloadable: true, sizeMB: 2300, totalSizeMB: 2700, price: 0, version: '1.0.0', developer: 'CoolFrost', category: 'Personalization', rating: 4.9, downloads: '5.8K', description: 'Premium live 3D wallpaper engine with dynamic physics and lighting effects.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>' },
+    { id: 'truespecs', name: 'Truespecs', color: '#ff1493', isDownloadable: true, hideFromStore: true, sizeMB: 800, price: 0, version: '1.0.0', developer: 'Truespecs Technologies', category: 'Utilities', rating: 5.0, downloads: '14.2K', description: 'Get detailed device specs right on your home screen.', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>' },
+    { id: 'nitroracese', name: 'Nitro Race SE', color: '#8b5cf6', isDownloadable: true, hideFromStore: true, sizeMB: 9840.64, price: 100.00, version: '1.0.0', developer: 'RaceMakingStudio', category: 'Games', rating: 4.9, downloads: '0', description: 'The ultimate Nitro Race experience. 3 maps, 2 cars, and more!', icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' }
   ]
 };
+

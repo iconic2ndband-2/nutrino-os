@@ -4,10 +4,8 @@
 
   window.os = {
     state: {
-      screen: 'lockscreen', app: null, history: [],
-      settings: { theme: 'dark', wallpaper: 'gradient-1', brightness: 100 },
-      internetSpeed: 1, currentPlan: 'free', dataUsage: 0,
-      bankBalance: 100, bankTransactions: [], installedApps: []
+      screen: 'lockscreen', app: null, history: [], settings: { theme: 'dark', wallpaper: 'gradient-1', brightness: 100 },
+      internetSpeed: 1, currentPlan: 'free', dataUsage: 0, bankBalance: 100, bankTransactions: [], installedApps: []
     },
 
     async boot() {
@@ -21,10 +19,10 @@
       this.state.bankBalance = (rawBal !== null && !isNaN(parsedBal)) ? parsedBal : 100;
       this.state.bankTransactions = JSON.parse(localStorage.getItem(K.TX) || '[]');
       try { const s = localStorage.getItem(K.APPS); this.state.installedApps = s ? JSON.parse(s) : []; } catch (e) { this.state.installedApps = []; }
-      const statusEl = document.getElementById('os-statusbar-container');
+      const statusEl = document.getElementById('os-statusbar-container'), vp = document.getElementById('os-viewport');
       if (statusEl && window.statusbar) window.statusbar.mount(statusEl);
-      const vp = document.getElementById('os-viewport');
       if (vp && window.router) { window.router.init(vp); window.router.navigate('lockscreen'); this.state.screen = 'lockscreen'; }
+      (this.state.installedApps || []).forEach(id => this.scheduleUpdateCheck(id));
     },
 
     launchApp(name) { this.state.screen = 'app'; this.state.app = name; window.router?.navigate('app', name); },
@@ -45,19 +43,20 @@
     getSignalStrength() { return window.osData ? window.osData.getSignalStrength() : 90; }, getWiFiSignal() { return window.osData ? window.osData.getWiFiSignal() : 95; },
     getBrightness() { return window.osData ? window.osData.getBrightness() : (this.state.settings.brightness || 100); },
 
-    isWebGLSupported() { return window.osGpu?.isWebGLSupported() ?? true; },
-    isWebGL2Supported() { return window.osGpu?.isWebGL2Supported() ?? true; },
-    isWebGPUSupported() { return window.osGpu?.isWebGPUSupported() ?? false; },
-    getGPUInfo() { return window.osGpu?.getGPUInfo() || '2T-PEX'; },
+    isWebGLSupported() { return window.osGpu?.isWebGLSupported() ?? true; }, isWebGL2Supported() { return window.osGpu?.isWebGL2Supported() ?? true; },
+    isWebGPUSupported() { return window.osGpu?.isWebGPUSupported() ?? false; }, getGPUInfo() { return window.osGpu?.getGPUInfo() || '2T-PEX'; },
     canRun3D() { return window.osGpu ? window.osGpu.canRun3D() : true; },
 
     checkForUpdates() { return window.osVersions ? window.osVersions.checkForUpdates() : []; },
     getAppVersions(id) { return window.osVersions ? window.osVersions.getAppVersions(id) : []; },
     getLatestVersion(id) { return window.osVersions ? window.osVersions.getLatestVersion(id) : { version: '1.0.0' }; },
     isUpdateAvailable(id) { return window.osVersions ? window.osVersions.isUpdateAvailable(id) : false; },
+    getActiveVersion(id) { return window.osVersions ? window.osVersions.getActiveVersion(id) : '1.0.0'; },
+    setActiveVersion(id, ver) { return window.osVersions ? window.osVersions.setActiveVersion(id, ver) : false; },
     getInstalledVersion(id) { return window.osVersions ? window.osVersions.getInstalledVersion(id) : '1.0.0'; },
     installVersion(id, ver) { return window.osVersions ? window.osVersions.installVersion(id, ver) : this.installApp(id); },
     rollbackApp(id, ver) { return window.osVersions ? window.osVersions.rollbackApp(id, ver) : this.installVersion(id, ver); },
+    scheduleUpdateCheck(id) { if (window.osVersions) window.osVersions.scheduleUpdateCheck(id); },
     startUpdate(id) { return window.osVersions ? window.osVersions.startUpdate(id) : true; },
     addUpdateBadge(id) { if (window.osVersions) window.osVersions.addUpdateBadge(id); },
 
@@ -65,12 +64,15 @@
       const wpId = typeof wpData === 'object' ? (wpData.id || 'nebula') : (wpData || 'nebula');
       if (screen === 'home' || screen === 'both') localStorage.setItem('nos_wp_home_3d', wpId);
       if (screen === 'lock' || screen === 'both') localStorage.setItem('nos_wp_lock_3d', wpId);
-      const label = screen === 'both' ? 'Home & Lock' : (screen === 'home' ? 'Home' : 'Lock');
-      window.animations?.showToast?.(`3D Wallpaper applied to ${label}!`);
+      window.animations?.showToast?.(`3D Wallpaper applied to ${screen === 'both' ? 'Home & Lock' : (screen === 'home' ? 'Home' : 'Lock')}!`);
       return true;
     },
     getWallpaper3D(screen) {
-      return screen === 'lock' ? localStorage.getItem('nos_wp_lock_3d') : localStorage.getItem('nos_wp_home_3d');
+      if (screen === 'lock') {
+        const v = this.getActiveVersion('3dpapers') || '1.0.0';
+        return v.startsWith('2') ? localStorage.getItem('nos_wp_lock_3d') : null;
+      }
+      return localStorage.getItem('nos_wp_home_3d');
     },
 
     setInternetPlan(planId) {
@@ -90,6 +92,7 @@
     installApp(appId) {
       if (!Array.isArray(this.state.installedApps)) this.state.installedApps = [];
       if (!this.state.installedApps.includes(appId)) { this.state.installedApps.push(appId); localStorage.setItem(K.APPS, JSON.stringify(this.state.installedApps)); }
+      this.scheduleUpdateCheck(appId);
     },
     uninstallApp(appId) {
       if (!Array.isArray(this.state.installedApps)) try { this.state.installedApps = JSON.parse(localStorage.getItem(K.APPS) || '[]'); } catch (e) { this.state.installedApps = []; }
@@ -129,8 +132,7 @@
       try { return this.isAppInstalled('gamesafe') && Boolean(JSON.parse(localStorage.getItem('gamesafe_sub') || '{}')?.isActive); } catch (e) { return false; }
     },
     resetFactory(keepGamesafe = false) {
-      const gKeys = ['gamesafe_user', 'gamesafe_users', 'gamesafe_sub', 'gamesafe_saves', 'gamesafe_connections', 'gamesafe_db'];
-      const saved = {};
+      const gKeys = ['gamesafe_user', 'gamesafe_users', 'gamesafe_sub', 'gamesafe_saves', 'gamesafe_connections', 'gamesafe_db'], saved = {};
       if (keepGamesafe) gKeys.forEach(k => { const v = localStorage.getItem(k); if (v) saved[k] = v; });
       localStorage.clear();
       if (keepGamesafe) {

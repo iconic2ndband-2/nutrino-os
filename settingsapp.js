@@ -1,4 +1,4 @@
-/* FILE: settingsapp.js — OS settings for theme, wallpaper, brightness, and device info */
+/* FILE: settingsapp.js — OS settings for theme, wallpaper, brightness, apps, and device info */
 (function() {
   let activeTab = 'general';
 
@@ -17,6 +17,7 @@
       <div style="display: flex; flex-direction: column; gap: 12px; height: 100%;">
         <div class="settings-tab-bar">
           <button class="settings-tab-btn ${activeTab === 'general' ? 'active' : ''}" data-tab="general">General</button>
+          <button class="settings-tab-btn ${activeTab === 'apps' ? 'active' : ''}" data-tab="apps">Apps</button>
           <button class="settings-tab-btn ${activeTab === 'about' ? 'active' : ''}" data-tab="about">About Device</button>
         </div>
 
@@ -41,6 +42,30 @@
               <div class="settings-group-header">Wallpaper</div>
               <div class="wallpaper-grid">
                 ${wpCards}
+              </div>
+            </div>
+          ` : activeTab === 'apps' ? `
+            <div class="settings-group">
+              <div class="settings-group-header">Installed Applications & Developers</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${(window.CONSTANTS.APPS || []).map(a => {
+                  const isInst = window.os?.isAppInstalled(a.id);
+                  const dev = a.developer || 'Nutrino Core';
+                  const ver = window.os?.getInstalledVersion ? window.os.getInstalledVersion(a.id) : (a.version || '1.0.0');
+                  return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: ${a.color}; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff;">${a.icon}</div>
+                        <div>
+                          <div style="font-size: 13px; font-weight: 700;">${a.name}</div>
+                          <div style="font-size: 11px; color: var(--text-muted);">Developer: <span style="color:var(--text-primary);font-weight:600;">${dev}</span> • v${ver}</div>
+                        </div>
+                      </div>
+                      <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: ${isInst ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.06)'}; color: ${isInst ? '#34d399' : 'var(--text-muted)'}; font-weight: 600;">
+                        ${isInst ? 'Installed' : 'Store'}
+                      </span>
+                    </div>`;
+                }).join('')}
               </div>
             </div>
           ` : `<div id="about-device-mount">Loading Device Specs...</div>`}

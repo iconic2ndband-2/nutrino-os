@@ -48,7 +48,7 @@
               <span class="store-app-name">${app.name}</span>
               <span style="font-size:12px;font-weight:700;color:#34d399;">${priceText}</span>
             </div>
-            <div class="store-app-specs">${sizeText} • ⭐ ${app.rating || '4.5'} • ${app.category || 'App'}</div>
+            <div class="store-app-specs">${sizeText} • ${app.developer || 'Nutrino'} • ⭐ ${app.rating || '4.5'}</div>
             <div class="store-app-desc">${app.description || ''}</div>
           </div>
           <div style="align-self:center;margin-left:8px;">

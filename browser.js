@@ -2,6 +2,16 @@
 (function() {
   let navHistory = ['home'], historyIdx = 0, currentContainer = null, activeTimer = null;
 
+  const SITES = [
+    { url: 'truespecs.nos', icon: '⚡', bg: '#ff1493', name: 'truespecs.nos', desc: 'Hardware specs companion & app portal', handler: () => window.truespecsNos },
+    { url: 'byloop.nos', icon: '🔄', bg: '#00d4ff', name: 'byloop.nos', desc: 'Wipe Fresh developer & recovery tools', handler: () => window.byloopNos },
+    { url: 'coolfrost.nos', icon: '❄️', bg: '#6c5ce7', name: 'coolfrost.nos', desc: '3DPapers studio & WebGL wallpapers', handler: () => window.coolfrostNos },
+    { url: 'whitegames.nos', icon: '🛡️', bg: '#38bdf8', name: 'whitegames.nos', desc: 'Gamesafe cloud backup & save locker', handler: () => window.whitegamesNos },
+    { url: 'makeracingstudio.nos', icon: '🏎️', bg: '#f43f5e', name: 'makeracingstudio.nos', desc: 'Nutrino Games developer portal & SE', handler: () => window.makeRacingStudioNos },
+    { url: 'network.nos', icon: '📶', bg: '#3b82f6', name: 'network.nos', desc: 'ISP plans & broadband speed manager', handler: () => window.networkNos },
+    { url: 'superbank.nos', icon: '🏛️', bg: '#10b981', name: 'superbank.nos', desc: 'Checking account, deposits & transfers', handler: () => window.superbankNos }
+  ];
+
   function normalizeUrl(input) {
     if (!input) return 'home';
     let url = input.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -13,36 +23,17 @@
       <div class="browser-start-page">
         <div class="browser-hero-icon">🌐</div>
         <h2 class="browser-start-title">Nutrino Web Explorer</h2>
-        <p class="browser-start-desc">Local Offline Sandbox Network</p>
+        <p class="browser-start-desc">Local Offline Sandbox Network (v1.5.1)</p>
         <div class="browser-bookmarks-grid">
-          <div class="browser-bookmark-card" data-url="truespecs.nos">
-            <div class="bookmark-icon" style="background:#ff1493;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;">⚡</div>
-            <div class="bookmark-details">
-              <div class="bookmark-name" style="color:#ff69b4;font-weight:700;">truespecs.nos</div>
-              <div class="bookmark-desc">Hardware specs companion & app portal</div>
+          ${SITES.map(s => `
+            <div class="browser-bookmark-card" data-url="${s.url}">
+              <div class="bookmark-icon" style="background:${s.bg};color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;">${s.icon}</div>
+              <div class="bookmark-details">
+                <div class="bookmark-name" style="font-weight:700;">${s.name}</div>
+                <div class="bookmark-desc">${s.desc}</div>
+              </div>
             </div>
-          </div>
-          <div class="browser-bookmark-card" data-url="network.nos">
-            <div class="bookmark-icon">📶</div>
-            <div class="bookmark-details">
-              <div class="bookmark-name">network.nos</div>
-              <div class="bookmark-desc">ISP plans & broadband speed manager</div>
-            </div>
-          </div>
-          <div class="browser-bookmark-card" data-url="superbank.nos">
-            <div class="bookmark-icon">🏛️</div>
-            <div class="bookmark-details">
-              <div class="bookmark-name">superbank.nos</div>
-              <div class="bookmark-desc">Checking account, deposits & transfers</div>
-            </div>
-          </div>
-          <div class="browser-bookmark-card" data-url="makeracingstudio.nos">
-            <div class="bookmark-icon">🏎️</div>
-            <div class="bookmark-details">
-              <div class="bookmark-name">makeracingstudio.nos</div>
-              <div class="bookmark-desc">Nutrino Games developer portal & SE</div>
-            </div>
-          </div>
+          `).join('')}
         </div>
       </div>`;
   }
@@ -53,7 +44,7 @@
         <div class="browser-error-icon">⚠️</div>
         <h3>Site Not Found</h3>
         <p>The address <strong>${url}</strong> could not be resolved on the local network.</p>
-        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: truespecs.nos, network.nos, superbank.nos, makeracingstudio.nos</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: ${SITES.map(s => s.url).join(', ')}</p>
       </div>`;
   }
 
@@ -86,20 +77,15 @@
         contentArea.querySelectorAll('.browser-bookmark-card').forEach(c => {
           c.onclick = () => loadPage(c.dataset.url);
         });
-      } else if (norm === 'truespecs.nos') {
-        contentArea.innerHTML = window.truespecsNos.getHtml();
-        window.truespecsNos.bindEvents(contentArea, () => loadPage('truespecs.nos', false));
-      } else if (norm === 'network.nos') {
-        contentArea.innerHTML = window.networkNos.getHtml();
-        window.networkNos.bindEvents(contentArea, () => loadPage('network.nos', false));
-      } else if (norm === 'superbank.nos') {
-        contentArea.innerHTML = window.superbankNos.getHtml();
-        window.superbankNos.bindEvents(contentArea, () => loadPage('superbank.nos', false));
-      } else if (norm === 'makeracingstudio.nos') {
-        contentArea.innerHTML = window.makeRacingStudioNos.getHtml();
-        window.makeRacingStudioNos.bindEvents(contentArea, () => loadPage('makeracingstudio.nos', false));
       } else {
-        contentArea.innerHTML = renderNotFound(norm);
+        const site = SITES.find(s => s.url === norm);
+        const obj = site?.handler?.();
+        if (obj) {
+          contentArea.innerHTML = obj.getHtml();
+          obj.bindEvents(contentArea, () => loadPage(norm, false));
+        } else {
+          contentArea.innerHTML = renderNotFound(norm);
+        }
       }
     }, delay);
   }
@@ -114,7 +100,7 @@
             <button id="browser-btn-fwd" class="browser-nav-btn" title="Forward">›</button>
             <button id="browser-btn-reload" class="browser-nav-btn" title="Reload">↻</button>
             <button id="browser-btn-home" class="browser-nav-btn" title="Home">🏠</button>
-            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. truespecs.nos)">
+            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. byloop.nos)">
             <button id="browser-btn-go" class="browser-nav-btn" title="Go" style="font-size:13px;">Go</button>
           </div>
           <div class="browser-progress-track"><div id="browser-progress-bar" class="browser-progress-fill"></div></div>
