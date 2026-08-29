@@ -1,4 +1,4 @@
-/* FILE: gamesafe.js — Game cloud progress saver and backup synchronization manager */
+/* FILE: gamesafe.js — Game cloud progress vault and multi-account sync */
 (function() {
   let timerInterval = null, currentContainer = null;
   const K = { USER: 'gamesafe_user', USERS: 'gamesafe_users', SUB: 'gamesafe_sub', SAVES: 'gamesafe_saves', CONN: 'gamesafe_connections' };
@@ -42,14 +42,13 @@
       <div class="gs-card gs-auth-card">
         <div class="gs-logo">🛡️</div>
         <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Welcome to Gamesafe</h2>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Cloud progress backup & wipe protection</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Cloud progress backup & multi-account vault</p>
         <input type="text" id="gs-user-input" class="bank-input" placeholder="Enter Username" style="margin-bottom:8px;">
         <input type="password" id="gs-pass-input" class="bank-input" placeholder="Enter Password" style="margin-bottom:12px;">
         <button id="gs-auth-btn" class="btn-primary" style="width:100%;">Sign In / Sign Up</button>
       </div>`;
     c.querySelector('#gs-auth-btn').onclick = () => {
-      const u = c.querySelector('#gs-user-input').value.trim();
-      const p = c.querySelector('#gs-pass-input').value.trim();
+      const u = c.querySelector('#gs-user-input').value.trim(), p = c.querySelector('#gs-pass-input').value.trim();
       if (!u || !p) { window.animations?.showToast?.('Please enter username & password'); return; }
       const users = JSON.parse(localStorage.getItem(K.USERS) || '{}');
       if (!users[u]) users[u] = p;
@@ -68,7 +67,8 @@
     const saves = JSON.parse(localStorage.getItem(K.SAVES) || '{}');
     const isNitroInstalled = window.os?.isAppInstalled('nitrorace');
     const isNitroConn = conns.includes('nitrorace'), nrSave = saves.nitrorace;
-    const isSeInstalled = window.os?.isAppInstalled('nitroracese');
+    const is3dInstalled = window.os?.isAppInstalled('3dpapers');
+    const dpAccounts = window.gamesafeDB?.getAllAccounts('3dpapers') || [];
 
     c.innerHTML = `
       <div class="gs-dash">
@@ -83,20 +83,21 @@
           </div>
           <button id="gs-renew-btn" class="btn-primary" style="width:100%;min-height:34px;font-size:12px;background:#0ea5e9;">${sub.isActive ? 'Add 20s ($0.99)' : 'Subscribe ($0.99 / 20s)'}</button>
         </div>
-        <div style="font-size:13px;font-weight:700;margin:6px 0;">🎮 Supported Games</div>
+        <div style="font-size:13px;font-weight:700;margin:6px 0;">🎮 Cloud Saves & Apps</div>
         <div class="gs-card">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:22px;">🏎️</span><div><div style="font-weight:600;font-size:13px;">Nitro Race</div><div style="font-size:11px;color:var(--text-muted);">${isNitroInstalled ? (isNitroConn ? 'Connected' : 'Installed') : 'Not Installed'}</div></div></div>
             ${isNitroInstalled ? `<button id="gs-conn-nr" class="btn-primary" style="min-height:32px;padding:0 12px;font-size:12px;background:${isNitroConn ? '#10b981' : '#6366f1'}">${isNitroConn ? 'Linked ✓' : 'Connect'}</button>` : '<span style="font-size:11px;color:var(--text-muted);">Store App</span>'}
           </div>
-          ${nrSave ? `<div class="gs-save-preview"><strong>Saved Progress:</strong> Best: ${nrSave.highScore}m • Coins: ${nrSave.coins} • Speed Tier: Lv.${nrSave.level}</div>` : ''}
+          ${nrSave ? `<div class="gs-save-preview"><strong>Saved Progress:</strong> Best: ${nrSave.highScore}m • Coins: ${nrSave.coins}</div>` : ''}
         </div>
-        ${isSeInstalled ? `
-        <div class="gs-card" style="border-color:rgba(244,63,94,0.4);">
+        ${is3dInstalled ? `
+        <div class="gs-card">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:22px;">⭐</span><div><div style="font-weight:600;font-size:13px;">Nitro Race SE</div><div style="font-size:11px;color:#f43f5e;font-weight:600;">Nitro Race SE is not supported yet.</div></div></div>
-            <span style="font-size:11px;color:var(--text-muted);">No Sync</span>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:22px;">🌌</span><div><div style="font-weight:600;font-size:13px;">3DPapers Cloud</div><div style="font-size:11px;color:var(--text-muted);">${dpAccounts.length} Account(s) Synced</div></div></div>
+            <span style="font-size:11px;color:#34d399;font-weight:700;">Multi-Vault ✓</span>
           </div>
+          ${dpAccounts.length > 0 ? `<div class="gs-save-preview" style="margin-top:6px;"><strong>Accounts:</strong> ${dpAccounts.join(', ')}</div>` : ''}
         </div>` : ''}
         <button id="gs-logout-btn" class="btn-secondary" style="width:100%;margin-top:auto;">Log Out</button>
       </div>`;
@@ -123,6 +124,11 @@
   window.gamesafe = {
     isSubscribed() { return getSub().isActive; },
     isConnected(gameId) { return (JSON.parse(localStorage.getItem(K.CONN) || '[]')).includes(gameId); },
+    save(appKey, username, data) { return window.gamesafeDB ? window.gamesafeDB.save(appKey, username, data) : false; },
+    load(appKey, username) { return window.gamesafeDB ? window.gamesafeDB.load(appKey, username) : null; },
+    exists(appKey, username) { return window.gamesafeDB ? window.gamesafeDB.exists(appKey, username) : false; },
+    getAllAccounts(appKey) { return window.gamesafeDB ? window.gamesafeDB.getAllAccounts(appKey) : []; },
+    delete(appKey, username) { return window.gamesafeDB ? window.gamesafeDB.delete(appKey, username) : false; },
     saveGame(gameId, data) {
       if (gameId === 'nitroracese') return { success: false, message: 'Nitro Race SE is not supported yet.' };
       if (!this.isSubscribed()) return { success: false, message: 'Gamesafe subscription is inactive or expired.' };

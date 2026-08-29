@@ -15,6 +15,13 @@
         <h2 class="browser-start-title">Nutrino Web Explorer</h2>
         <p class="browser-start-desc">Local Offline Sandbox Network</p>
         <div class="browser-bookmarks-grid">
+          <div class="browser-bookmark-card" data-url="truespecs.nos">
+            <div class="bookmark-icon" style="background:#ff1493;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;">⚡</div>
+            <div class="bookmark-details">
+              <div class="bookmark-name" style="color:#ff69b4;font-weight:700;">truespecs.nos</div>
+              <div class="bookmark-desc">Hardware specs companion & app portal</div>
+            </div>
+          </div>
           <div class="browser-bookmark-card" data-url="network.nos">
             <div class="bookmark-icon">📶</div>
             <div class="bookmark-details">
@@ -46,7 +53,7 @@
         <div class="browser-error-icon">⚠️</div>
         <h3>Site Not Found</h3>
         <p>The address <strong>${url}</strong> could not be resolved on the local network.</p>
-        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: network.nos, superbank.nos, makeracingstudio.nos</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: truespecs.nos, network.nos, superbank.nos, makeracingstudio.nos</p>
       </div>`;
   }
 
@@ -79,6 +86,9 @@
         contentArea.querySelectorAll('.browser-bookmark-card').forEach(c => {
           c.onclick = () => loadPage(c.dataset.url);
         });
+      } else if (norm === 'truespecs.nos') {
+        contentArea.innerHTML = window.truespecsNos.getHtml();
+        window.truespecsNos.bindEvents(contentArea, () => loadPage('truespecs.nos', false));
       } else if (norm === 'network.nos') {
         contentArea.innerHTML = window.networkNos.getHtml();
         window.networkNos.bindEvents(contentArea, () => loadPage('network.nos', false));
@@ -104,7 +114,7 @@
             <button id="browser-btn-fwd" class="browser-nav-btn" title="Forward">›</button>
             <button id="browser-btn-reload" class="browser-nav-btn" title="Reload">↻</button>
             <button id="browser-btn-home" class="browser-nav-btn" title="Home">🏠</button>
-            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. network.nos)">
+            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. truespecs.nos)">
             <button id="browser-btn-go" class="browser-nav-btn" title="Go" style="font-size:13px;">Go</button>
           </div>
           <div class="browser-progress-track"><div id="browser-progress-bar" class="browser-progress-fill"></div></div>

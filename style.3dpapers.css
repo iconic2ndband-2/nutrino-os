@@ -1,0 +1,21 @@
+/* FILE: style.3dpapers.css — Dedicated visual styles for 3DPapers live wallpaper engine */
+.p3d-root { display: flex; flex-direction: column; height: 100%; background: #09090b; color: #f8fafc; overflow: hidden; position: relative; }
+.p3d-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); z-index: 10; }
+.p3d-spend-badge { display: flex; align-items: center; gap: 4px; background: rgba(139, 92, 246, 0.18); border: 1px solid rgba(139, 92, 246, 0.4); color: #c4b5fd; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 9999px; }
+.p3d-stage { width: 100%; height: 175px; position: relative; background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%); border-bottom: 1px solid rgba(255, 255, 255, 0.08); overflow: hidden; flex-shrink: 0; }
+.p3d-stage canvas { width: 100%; height: 100%; display: block; }
+.p3d-stage-overlay { position: absolute; bottom: 8px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.p3d-stage-tag { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.15); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; backdrop-filter: blur(6px); }
+.p3d-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.p3d-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; transition: transform 0.15s ease, border-color 0.15s ease; }
+.p3d-card.active { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.12); }
+.p3d-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.p3d-card-price { font-size: 11px; font-weight: 800; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3); }
+.p3d-card-desc { font-size: 11px; color: #94a3b8; line-height: 1.45; }
+.p3d-card-actions { display: flex; gap: 8px; margin-top: 4px; }
+.p3d-modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.p3d-modal-card { background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 100%; max-width: 340px; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column; gap: 12px; }
+.p3d-step-pip-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.p3d-step-pip { width: 20px; height: 20px; border-radius: 50%; background: #334155; color: #94a3b8; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.p3d-step-pip.active { background: #8b5cf6; color: #fff; box-shadow: 0 0 8px #8b5cf6; }
+.p3d-step-pip.done { background: #10b981; color: #fff; }

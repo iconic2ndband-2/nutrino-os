@@ -63,8 +63,10 @@
             <div class="store-stat-card"><span class="label">STATUS</span><span class="val" style="color:${isSeInstalled ? '#34d399' : '#f59e0b'}">${isSeInstalled ? 'Installed' : 'New'}</span></div>
           </div>
           <div class="store-screenshot-wrap" style="height:115px;margin-bottom:10px;"><canvas id="mrs-se-preview-canvas" width="300" height="115"></canvas></div>
-          <p style="font-size:12px;line-height:1.4;margin-bottom:12px;color:var(--text-muted);">${meta.description}</p>
-          <div id="mrs-se-action-area">
+          <p style="font-size:12px;line-height:1.4;margin-bottom:10px;color:var(--text-muted);">${meta.description}</p>
+          ${window.mrsSeInfo ? window.mrsSeInfo.renderWhatsNew() : ''}
+          ${window.mrsSeInfo ? window.mrsSeInfo.renderComparison() : ''}
+          <div id="mrs-se-action-area" style="margin-top:10px;">
             ${isSeInstalled ? `
               <button id="mrs-play-se-btn" class="btn-primary" style="background:#10b981;width:100%;">Play Nitro Race SE ▶</button>
             ` : `

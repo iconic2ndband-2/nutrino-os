@@ -17,9 +17,11 @@
     browser: () => window.browserApp,
     softstore: () => window.softstoreApp,
     wipefresh: () => window.wipefreshApp,
+    truespecs: () => window.truespecsApp,
     nitrorace: () => window.nitroraceApp,
     nitroracese: () => window.nitroraceSeApp,
-    gamesafe: () => window.gamesafe
+    gamesafe: () => window.gamesafe,
+    '3dpapers': () => window.threeDPapersApp
   };
 
   window.router = {

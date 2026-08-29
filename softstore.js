@@ -1,4 +1,4 @@
-/* FILE: softstore.js — Steam-inspired App Store application */
+/* FILE: softstore.js — SoftStore v2.0 Application Catalog, Library & Updates */
 (function() {
   let currentContainer = null, activeTab = 'featured', selectedAppId = null;
 
@@ -13,21 +13,25 @@
 
     const downloadableApps = (window.CONSTANTS.APPS || []).filter(a => a.isDownloadable && !a.hideFromStore);
     const installedApps = downloadableApps.filter(a => window.os?.isAppInstalled(a.id));
+    const updates = window.os?.checkForUpdates ? window.os.checkForUpdates() : [];
 
     currentContainer.innerHTML = `
       <div class="store-root">
         <div class="store-header">
-          <div class="store-brand">⚡ SOFTSTORE</div>
+          <div class="store-brand">⚡ SOFTSTORE <span style="font-size:10px;color:var(--accent-color);font-weight:700;">v2.0</span></div>
           <div class="store-tabs">
             <button class="store-tab ${activeTab === 'featured' ? 'active' : ''}" data-tab="featured">Featured</button>
             <button class="store-tab ${activeTab === 'library' ? 'active' : ''}" data-tab="library">Library (${installedApps.length})</button>
+            <button class="store-tab ${activeTab === 'updates' ? 'active' : ''}" data-tab="updates">
+              Updates ${updates.length > 0 ? `<span class="store-tab-badge">${updates.length}</span>` : ''}
+            </button>
           </div>
         </div>
         <div class="store-content">
-          ${activeTab === 'featured' ? renderFeaturedList(downloadableApps) : renderLibraryList(installedApps)}
+          ${activeTab === 'featured' ? renderFeaturedList(downloadableApps) : (activeTab === 'library' ? renderLibraryList(installedApps) : window.softstoreUpdates?.render(updates))}
         </div>
       </div>`;
-    bindEvents();
+    bindEvents(updates);
   }
 
   function renderFeaturedList(apps) {
@@ -72,7 +76,7 @@
           <div class="store-app-icon-sm" style="background:${app.color};width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">${app.icon}</div>
           <div>
             <div style="font-weight:600;font-size:13px;">${app.name}</div>
-            <div style="font-size:11px;color:var(--text-muted);">${app.sizeMB >= 1000 ? (app.sizeMB / 1000) + ' GB' : app.sizeMB + ' MB'} • v${app.version || '1.0.0'}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${app.sizeMB >= 1000 ? (app.sizeMB / 1000) + ' GB' : app.sizeMB + ' MB'} • v${window.os?.getInstalledVersion?.(app.id) || app.version || '1.0.0'}</div>
           </div>
         </div>
         <div style="display:flex;gap:6px;">
@@ -83,15 +87,12 @@
     return `<div class="store-lib-list"><div class="store-section-title" style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Installed Applications (${installedApps.length})</div>${items}</div>`;
   }
 
-  function bindEvents() {
+  function bindEvents(updates) {
     currentContainer.querySelectorAll('.store-tab').forEach(t => {
       t.onclick = () => { activeTab = t.dataset.tab; renderUI(); };
     });
     currentContainer.querySelectorAll('.store-clickable-card').forEach(card => {
-      card.onclick = () => {
-        selectedAppId = card.dataset.appid;
-        renderUI();
-      };
+      card.onclick = () => { selectedAppId = card.dataset.appid; renderUI(); };
     });
     currentContainer.querySelectorAll('.store-lib-launch').forEach(btn => {
       btn.onclick = () => window.os?.launchApp(btn.dataset.launchid);
@@ -113,26 +114,20 @@
 
         if (window.confirmModal) {
           window.confirmModal.show({
-            title: `Uninstall ${name}?`,
-            message: `Are you sure you want to delete ${name} from your device? This frees up ${sizeFormatted}.`,
-            icon: '📦',
-            confirmText: 'Uninstall',
-            cancelText: 'Keep',
-            isDestructive: true,
-            onConfirm: performUninstall
+            title: `Uninstall ${name}?`, message: `Are you sure you want to delete ${name} from your device? This frees up ${sizeFormatted}.`,
+            icon: '📦', confirmText: 'Uninstall', cancelText: 'Keep', isDestructive: true, onConfirm: performUninstall
           });
-        } else {
-          performUninstall();
-        }
+        } else { performUninstall(); }
       };
     });
+
+    if (activeTab === 'updates') {
+      window.softstoreUpdates?.bindEvents(currentContainer, () => renderUI());
+    }
   }
 
   window.softstoreApp = {
     mount(container) { currentContainer = container; selectedAppId = null; renderUI(); },
-    unmount() {
-      window.softstoreDetail?.unmount?.();
-      currentContainer = null;
-    }
+    unmount() { window.softstoreDetail?.unmount?.(); currentContainer = null; }
   };
 })();

@@ -1,0 +1,137 @@
+/* FILE: style.v12.css — Styles for Nutrino OS v1.2: Crash Screen, Version Badges, & Store v2.0 */
+/* Home Screen Version & Update Badges */
+.app-ver-tag {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-top: 1px;
+  letter-spacing: 0.2px;
+}
+.app-update-badge {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  background: #10b981;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 6px;
+  border: 1.5px solid #18181b;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  z-index: 5;
+  text-transform: uppercase;
+}
+.store-tab-badge {
+  background: #10b981;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+/* 3D GPU Crash Screen */
+.os-crash-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.95);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+}
+.os-crash-box {
+  background: #18181b;
+  border: 2px solid #ef4444;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+}
+.os-crash-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.os-crash-icon {
+  font-size: 20px;
+}
+.os-crash-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: #ef4444;
+  letter-spacing: 1px;
+}
+.os-crash-app-meta {
+  margin-bottom: 10px;
+}
+.os-crash-app-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+.os-crash-app-ver {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.os-crash-reason {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin: 10px 0;
+}
+.os-crash-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+}
+.os-crash-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.os-crash-row {
+  display: flex;
+  justify-content: space-between;
+}
+.os-crash-label {
+  color: var(--text-muted);
+}
+.os-crash-val {
+  color: #fff;
+  font-weight: 600;
+}
+.os-crash-val.status-ok {
+  color: #34d399;
+}
+.os-crash-val.status-err {
+  color: #f87171;
+}
+.os-crash-btn {
+  width: 100%;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.os-crash-btn:active {
+  opacity: 0.85;
+}

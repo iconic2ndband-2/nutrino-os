@@ -105,6 +105,10 @@
   window.nitroraceApp = {
     mount(container) {
       containerEl = container;
+      if (!window.os?.canRun3D?.()) {
+        window.osGpu?.showCrashScreen(container, 'Nitro Race 3D', window.os?.getInstalledVersion('nitrorace'), () => window.os?.goBack?.());
+        return;
+      }
       container.innerHTML = `
         <div class="nr-root">
           <div id="nr-hud" class="nr-hud"></div>

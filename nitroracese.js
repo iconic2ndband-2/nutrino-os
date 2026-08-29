@@ -73,7 +73,12 @@
 
   window.nitroraceSeApp = {
     mount(container) {
-      containerEl = container; currentScreen = 'menu'; isRacing = false;
+      containerEl = container;
+      if (!window.os?.canRun3D?.()) {
+        window.osGpu?.showCrashScreen(container, 'Nitro Race SE', window.os?.getInstalledVersion('nitroracese'), () => window.os?.goBack?.());
+        return;
+      }
+      currentScreen = 'menu'; isRacing = false;
       container.innerHTML = `
         <div class="nr-root" style="background:#000;">
           <div id="nr-se-hud" class="nr-hud"></div>
