@@ -1,15 +1,16 @@
-/* FILE: browser.js — Local Sandbox Web Browser application */
+/* FILE: browser.js — Local Sandbox Web Browser application with developer portals */
 (function() {
   let navHistory = ['home'], historyIdx = 0, currentContainer = null, activeTimer = null;
 
   const SITES = [
-    { url: 'truespecs.nos', icon: '⚡', bg: '#ff1493', name: 'truespecs.nos', desc: 'Hardware specs companion & app portal', handler: () => window.truespecsNos },
-    { url: 'byloop.nos', icon: '🔄', bg: '#00d4ff', name: 'byloop.nos', desc: 'Wipe Fresh developer & recovery tools', handler: () => window.byloopNos },
-    { url: 'coolfrost.nos', icon: '❄️', bg: '#6c5ce7', name: 'coolfrost.nos', desc: '3DPapers studio & WebGL wallpapers', handler: () => window.coolfrostNos },
-    { url: 'whitegames.nos', icon: '🛡️', bg: '#38bdf8', name: 'whitegames.nos', desc: 'Gamesafe cloud backup & save locker', handler: () => window.whitegamesNos },
-    { url: 'makeracingstudio.nos', icon: '🏎️', bg: '#f43f5e', name: 'makeracingstudio.nos', desc: 'Nutrino Games developer portal & SE', handler: () => window.makeRacingStudioNos },
-    { url: 'network.nos', icon: '📶', bg: '#3b82f6', name: 'network.nos', desc: 'ISP plans & broadband speed manager', handler: () => window.networkNos },
-    { url: 'superbank.nos', icon: '🏛️', bg: '#10b981', name: 'superbank.nos', desc: 'Checking account, deposits & transfers', handler: () => window.superbankNos }
+    { url: 'truespecs.nos', icon: '⚡', bg: '#ff1493', name: 'truespecs.nos', desc: 'Hardware specs companion & app portal', render: (c) => { c.innerHTML = window.truespecsNos.getHtml(); window.truespecsNos.bindEvents(c, () => loadPage('truespecs.nos', false)); } },
+    { url: 'byloop.nos', icon: '🔄', bg: '#00d4ff', name: 'byloop.nos', desc: 'Wipe Fresh developer & recovery tools', render: (c) => { c.innerHTML = window.byloopNos.getHtml(); window.byloopNos.bindEvents(c, () => loadPage('byloop.nos', false)); } },
+    { url: 'coolfrost.nos', icon: '❄️', bg: '#6c5ce7', name: 'coolfrost.nos', desc: '3DPapers studio & WebGL wallpapers', render: (c) => { c.innerHTML = window.coolfrostNos.getHtml(); window.coolfrostNos.bindEvents(c, () => loadPage('coolfrost.nos', false)); } },
+    { url: 'whitegames.nos', icon: '🛡️', bg: '#38bdf8', name: 'whitegames.nos', desc: 'Gamesafe cloud backup & save locker', render: (c) => { c.innerHTML = window.whitegamesNos.getHtml(); window.whitegamesNos.bindEvents(c, () => loadPage('whitegames.nos', false)); } },
+    { url: 'rampage-report.nos', icon: '🔬', bg: '#ff3333', name: 'rampage-report.nos', desc: 'real-osdb developer & storage telemetry', render: (c) => window.rampageReportNos?.render(c) },
+    { url: 'makeracingstudio.nos', icon: '🏎️', bg: '#f43f5e', name: 'makeracingstudio.nos', desc: 'Nutrino Games developer portal & SE', render: (c) => { c.innerHTML = window.makeRacingStudioNos.getHtml(); window.makeRacingStudioNos.bindEvents(c, () => loadPage('makeracingstudio.nos', false)); } },
+    { url: 'network.nos', icon: '📶', bg: '#3b82f6', name: 'network.nos', desc: 'ISP plans & broadband speed manager', render: (c) => { c.innerHTML = window.networkNos.getHtml(); window.networkNos.bindEvents(c, () => loadPage('network.nos', false)); } },
+    { url: 'superbank.nos', icon: '🏛️', bg: '#10b981', name: 'superbank.nos', desc: 'Checking account, deposits & transfers', render: (c) => { c.innerHTML = window.superbankNos.getHtml(); window.superbankNos.bindEvents(c, () => loadPage('superbank.nos', false)); } }
   ];
 
   function normalizeUrl(input) {
@@ -35,16 +36,6 @@
             </div>
           `).join('')}
         </div>
-      </div>`;
-  }
-
-  function renderNotFound(url) {
-    return `
-      <div class="browser-error-page">
-        <div class="browser-error-icon">⚠️</div>
-        <h3>Site Not Found</h3>
-        <p>The address <strong>${url}</strong> could not be resolved on the local network.</p>
-        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Available: ${SITES.map(s => s.url).join(', ')}</p>
       </div>`;
   }
 
@@ -74,18 +65,11 @@
       window.os?.addDataUsage(0.2);
       if (norm === 'home') {
         contentArea.innerHTML = renderStartPage();
-        contentArea.querySelectorAll('.browser-bookmark-card').forEach(c => {
-          c.onclick = () => loadPage(c.dataset.url);
-        });
+        contentArea.querySelectorAll('.browser-bookmark-card').forEach(c => { c.onclick = () => loadPage(c.dataset.url); });
       } else {
         const site = SITES.find(s => s.url === norm);
-        const obj = site?.handler?.();
-        if (obj) {
-          contentArea.innerHTML = obj.getHtml();
-          obj.bindEvents(contentArea, () => loadPage(norm, false));
-        } else {
-          contentArea.innerHTML = renderNotFound(norm);
-        }
+        if (site && site.render) site.render(contentArea);
+        else contentArea.innerHTML = `<div class="browser-error-page"><div class="browser-error-icon">⚠️</div><h3>Site Not Found</h3><p>The address <strong>${norm}</strong> could not be resolved.</p></div>`;
       }
     }, delay);
   }
@@ -100,7 +84,7 @@
             <button id="browser-btn-fwd" class="browser-nav-btn" title="Forward">›</button>
             <button id="browser-btn-reload" class="browser-nav-btn" title="Reload">↻</button>
             <button id="browser-btn-home" class="browser-nav-btn" title="Home">🏠</button>
-            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. byloop.nos)">
+            <input type="text" id="browser-url-input" class="browser-address-bar" placeholder="Enter .nos URL (e.g. rampage-report.nos)">
             <button id="browser-btn-go" class="browser-nav-btn" title="Go" style="font-size:13px;">Go</button>
           </div>
           <div class="browser-progress-track"><div id="browser-progress-bar" class="browser-progress-fill"></div></div>

@@ -1,6 +1,6 @@
-/* FILE: deviceinfo.js — Device identity, hardware specifications, and dynamic real-time storage metrics */
+/* FILE: deviceinfo.js — Device identity, hardware specifications, and dynamic real-time storage metrics with osdb */
 (function() {
-  const STORAGE_KEYS = { SERIAL: 'nos_serial_number', IMEI: 'nos_imei' };
+  let cachedIdentity = { serial: 'NOS-11-8942-X', imei: '35-920148-739102-4' };
 
   function generateSerial() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -15,25 +15,26 @@
     return imei;
   }
 
-  function ensureIdentity() {
-    let serial = localStorage.getItem(STORAGE_KEYS.SERIAL);
-    if (!serial) { serial = generateSerial(); localStorage.setItem(STORAGE_KEYS.SERIAL, serial); }
-    let imei = localStorage.getItem(STORAGE_KEYS.IMEI);
-    if (!imei) { imei = generateIMEI(); localStorage.setItem(STORAGE_KEYS.IMEI, imei); }
-    return { serial, imei };
-  }
-
   window.deviceInfo = {
-    init() { ensureIdentity(); },
+    async init() {
+      if (window.osdb) {
+        try {
+          let s = await window.osdb.get('device', 'serial');
+          let m = await window.osdb.get('device', 'imei');
+          if (!s) { s = generateSerial(); await window.osdb.put('device', { id: 'serial', val: s }); }
+          if (!m) { m = generateIMEI(); await window.osdb.put('device', { id: 'imei', val: m }); }
+          cachedIdentity = { serial: s, imei: m };
+        } catch (e) {}
+      }
+    },
 
     getSpecs() {
-      const identity = ensureIdentity();
       const base = (window.CONSTANTS && window.CONSTANTS.DEVICE_SPECS) || {};
       return {
         deviceName: base.deviceName || 'Nutrino N1',
         model: base.model || 'NOS-11',
-        osVersion: base.osVersion || 'Nutrino OS v1.1.2.2',
-        buildNumber: base.buildNumber || 'NOS-1.1.2.2-20250827',
+        osVersion: base.osVersion || 'Nutrino OS v1.5.1',
+        buildNumber: base.buildNumber || 'NOS-1.5.1-20260829',
         processor: base.processor || '10-Core, 600MHz - 1.3GHz',
         gpu: base.gpu || '2T-PEX (4-core, 600MHz)',
         ram: base.ram || '4GB LPDDR4',
@@ -50,9 +51,9 @@
         bluetooth: base.bluetooth || '5.2',
         securityPatch: base.securityPatch || 'August 1, 2026',
         kernelVersion: base.kernelVersion || '6.1.0-nutrino+',
-        buildDate: base.buildDate || 'August 27, 2026',
-        serialNumber: identity.serial,
-        imei: identity.imei
+        buildDate: base.buildDate || 'August 29, 2026',
+        serialNumber: cachedIdentity.serial,
+        imei: cachedIdentity.imei
       };
     },
 

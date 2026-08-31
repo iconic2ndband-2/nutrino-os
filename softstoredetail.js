@@ -1,6 +1,6 @@
 /* FILE: softstoredetail.js — SoftStore App Detail page view, versioning, & download flow */
 (function() {
-  let activeInterval = null, currentContainer = null;
+  let activeInterval = null, currentContainer = null, selectedShotIdx = 0;
 
   function renderDetail(appId, backCallback) {
     const app = (window.CONSTANTS.APPS || []).find(a => a.id === appId);
@@ -11,13 +11,17 @@
     const hasUpdate = window.os?.isUpdateAvailable ? window.os.isUpdateAvailable(appId) : false;
     const latestObj = window.os?.getLatestVersion ? window.os.getLatestVersion(appId) : null;
     const latestVer = latestObj?.version || '1.0.0';
-
     const totalSizeMB = window.CONSTANTS.APP_TOTAL_SIZE?.[appId] || app.totalSizeMB || app.sizeMB || 10;
     const dlSizeMB = isInstalled ? (latestObj?.size || app.sizeMB || 10) : totalSizeMB;
     const estTimeSec = window.os?.getDownloadTime(dlSizeMB) || 1;
     const estFormatted = estTimeSec < 60 ? `${estTimeSec.toFixed(1)}s` : `${(estTimeSec / 60).toFixed(1)}m`;
     const priceLabel = app.price === 0 ? 'Free' : `$${app.price.toFixed(2)}`;
     const sizeFormatted = totalSizeMB >= 1000 ? `${(totalSizeMB / 1000).toFixed(1)} GB` : `${totalSizeMB} MB`;
+    const isMultiShot = appId === 'realosdb';
+    const shotTabsHtml = isMultiShot ? `
+      <div style="display:flex;gap:6px;margin:4px 0 6px;">
+        ${['Overview', 'Stores', 'Search', 'Export'].map((name, i) => `<button class="store-shot-tab ${i === selectedShotIdx ? 'active' : ''}" data-idx="${i}" style="flex:1;background:${i === selectedShotIdx ? '#ff3333' : '#27272a'};color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:10px;cursor:pointer;">${name}</button>`).join('')}
+      </div>` : '';
 
     currentContainer.innerHTML = `
       <div class="store-detail-root">
@@ -36,13 +40,12 @@
           <div class="store-stat-card"><span class="label">SIZE</span><span class="val">${sizeFormatted}</span></div>
           <div class="store-stat-card"><span class="label">CATEGORY</span><span class="val">${app.category || 'Utility'}</span></div>
         </div>
-        <div style="font-size:12px;font-weight:700;margin:6px 0 2px;">PREVIEW SCREENSHOT</div>
+        <div style="font-size:12px;font-weight:700;margin:6px 0 2px;">PREVIEW SCREENSHOT ${isMultiShot ? `(${selectedShotIdx + 1}/4)` : ''}</div>
+        ${shotTabsHtml}
         <div class="store-screenshot-wrap"><canvas id="store-app-canvas" width="280" height="150" class="store-app-canvas"></canvas></div>
         <div style="font-size:12px;font-weight:700;margin:8px 0 4px;">ABOUT THIS APP</div>
         <div style="font-size:12px;color:var(--text-muted);line-height:1.4;margin-bottom:12px;">${app.description || ''}</div>
-        
         ${window.softstoreDetailVersions?.render ? window.softstoreDetailVersions.render(appId) : ''}
-
         <div id="store-action-zone" style="margin-top:16px;">
           ${isInstalled ? `
             <div style="display:flex;flex-direction:column;gap:8px;">
@@ -60,12 +63,15 @@
       </div>`;
 
     const canvas = currentContainer.querySelector('#store-app-canvas');
-    if (canvas && window.screenshots) window.screenshots.render(appId, canvas);
+    if (canvas && window.screenshots) window.screenshots.render(appId, canvas, selectedShotIdx);
+    currentContainer.querySelectorAll('.store-shot-tab').forEach(t => {
+      t.onclick = () => { selectedShotIdx = parseInt(t.dataset.idx, 10); renderDetail(appId, backCallback); };
+    });
     currentContainer.querySelector('#store-detail-back').onclick = backCallback;
     const launchBtn = currentContainer.querySelector('#store-launch-btn');
     if (launchBtn) launchBtn.onclick = () => window.os?.launchApp(appId);
     const updateActionBtn = currentContainer.querySelector('#store-update-action-btn');
-    if (updateActionBtn) updateActionBtn.onclick = () => startDownload(appId, latestObj?.size || sizeMB, backCallback, latestVer);
+    if (updateActionBtn) updateActionBtn.onclick = () => startDownload(appId, latestObj?.size || totalSizeMB, backCallback, latestVer);
 
     const uninstallBtn = currentContainer.querySelector('#store-uninstall-btn');
     if (uninstallBtn) {
@@ -91,17 +97,13 @@
         else startDownload(appId, dlSizeMB, backCallback, latestVer);
       };
     }
-
     window.softstoreDetailVersions?.bindEvents(currentContainer, appId, () => renderDetail(appId, backCallback));
   }
 
   function startDownload(appId, sizeMB, backCallback, targetVersion) {
-    const buyBtn = currentContainer.querySelector('#store-buy-btn');
-    const updateBtn = currentContainer.querySelector('#store-update-action-btn');
-    const progBox = currentContainer.querySelector('#store-dl-progress-box');
-    const fillBar = currentContainer.querySelector('#store-dl-fill-bar');
-    const progText = currentContainer.querySelector('#store-dl-text');
-    const progEta = currentContainer.querySelector('#store-dl-eta');
+    const buyBtn = currentContainer.querySelector('#store-buy-btn'), updateBtn = currentContainer.querySelector('#store-update-action-btn');
+    const progBox = currentContainer.querySelector('#store-dl-progress-box'), fillBar = currentContainer.querySelector('#store-dl-fill-bar');
+    const progText = currentContainer.querySelector('#store-dl-text'), progEta = currentContainer.querySelector('#store-dl-eta');
     if (buyBtn) buyBtn.style.display = 'none';
     if (updateBtn) updateBtn.style.display = 'none';
     if (progBox) progBox.style.display = 'block';
@@ -118,10 +120,9 @@
       const downloadedUnits = sizeMB >= 1000
         ? `${((elapsed / totalMs) * (sizeMB / 1000)).toFixed(2)} GB / ${(sizeMB / 1000).toFixed(0)} GB`
         : `${Math.round((elapsed / totalMs) * sizeMB)} MB / ${sizeMB} MB`;
-      const remSec = Math.max(0, ((totalMs - elapsed) / 1000)).toFixed(1);
       if (fillBar) fillBar.style.width = `${pct}%`;
       if (progText) progText.textContent = pct < 100 ? `${downloadedUnits} (${pct}%)` : 'Installing...';
-      if (progEta) progEta.textContent = `ETA: ${remSec}s`;
+      if (progEta) progEta.textContent = `ETA: ${Math.max(0, ((totalMs - elapsed) / 1000)).toFixed(1)}s`;
 
       if (elapsed >= totalMs) {
         clearInterval(activeInterval); activeInterval = null;
@@ -136,7 +137,7 @@
   }
 
   window.softstoreDetail = {
-    show(container, appId, onBack) { currentContainer = container; renderDetail(appId, onBack); },
+    show(container, appId, onBack) { selectedShotIdx = 0; currentContainer = container; renderDetail(appId, onBack); },
     unmount() { if (activeInterval) { clearInterval(activeInterval); activeInterval = null; } currentContainer = null; }
   };
 })();

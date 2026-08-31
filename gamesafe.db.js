@@ -1,59 +1,69 @@
-/* FILE: gamesafe.db.js — Multi-account database store and cloud save manager */
+/* FILE: gamesafe.db.js — Gamesafe cloud save vault powered by osdb (IndexedDB) */
 (function() {
-  const DB_KEY = 'gamesafe_db';
+  let inMemoryDB = {};
 
-  function getDB() {
-    try { return JSON.parse(localStorage.getItem(DB_KEY) || '{}'); }
-    catch (e) { return {}; }
+  async function syncFromOSDB() {
+    if (!window.osdb) return;
+    try {
+      const entry = await window.osdb.get('gamesafe', 'db');
+      if (entry && typeof entry === 'object') inMemoryDB = entry;
+    } catch (e) {}
   }
-  function setDB(db) {
-    localStorage.setItem(DB_KEY, JSON.stringify(db));
+
+  function persistToOSDB() {
+    if (window.osdb) {
+      window.osdb.put('gamesafe', { id: 'db', val: inMemoryDB });
+    }
   }
 
   window.gamesafeDB = {
+    async init() {
+      await syncFromOSDB();
+    },
+
     save(appKey, username, data) {
       if (!appKey || !username) return false;
-      const db = getDB();
-      if (!db[appKey]) db[appKey] = {};
-      db[appKey][username] = {
+      if (!inMemoryDB[appKey]) inMemoryDB[appKey] = {};
+      inMemoryDB[appKey][username] = {
         ...data,
         username,
         updatedAt: new Date().toISOString()
       };
-      setDB(db);
+      persistToOSDB();
       return true;
     },
 
     load(appKey, username) {
       if (!appKey || !username) return null;
-      const db = getDB();
-      return (db[appKey] && db[appKey][username]) ? db[appKey][username] : null;
+      return (inMemoryDB[appKey] && inMemoryDB[appKey][username]) ? inMemoryDB[appKey][username] : null;
     },
 
     exists(appKey, username) {
       if (!appKey || !username) return false;
-      const db = getDB();
-      return Boolean(db[appKey] && db[appKey][username]);
+      return Boolean(inMemoryDB[appKey] && inMemoryDB[appKey][username]);
     },
 
     getAllAccounts(appKey) {
       if (!appKey) return [];
-      const db = getDB();
-      return db[appKey] ? Object.keys(db[appKey]) : [];
+      return inMemoryDB[appKey] ? Object.keys(inMemoryDB[appKey]) : [];
     },
 
     delete(appKey, username) {
       if (!appKey || !username) return false;
-      const db = getDB();
-      if (db[appKey] && db[appKey][username]) {
-        delete db[appKey][username];
-        setDB(db);
+      if (inMemoryDB[appKey] && inMemoryDB[appKey][username]) {
+        delete inMemoryDB[appKey][username];
+        persistToOSDB();
         return true;
       }
       return false;
     },
 
-    getRawDB() { return getDB(); },
-    restoreDB(raw) { if (raw && typeof raw === 'object') setDB(raw); }
+    getRawDB() { return inMemoryDB; },
+    restoreDB(raw) {
+      if (raw && typeof raw === 'object') {
+        inMemoryDB = raw;
+        persistToOSDB();
+      }
+    }
   };
 })();

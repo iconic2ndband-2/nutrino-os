@@ -16,6 +16,11 @@
           </div>
           <div class="mrs-section-title">📰 Studio News & Announcements</div>
           <div class="mrs-news-list">
+            <div class="mrs-news-card" style="border-color:rgba(236,72,153,0.4);background:rgba(236,72,153,0.06);">
+              <div class="mrs-news-date" style="color:#f472b6;">August 31, 2026 • NEW UPDATE</div>
+              <div class="mrs-news-head" style="color:#fbcfe8;">🏆 Nitro Race Season 1: Neon Velocity Launched!</div>
+              <div class="mrs-news-body">The full 20-tier Season 1 Battle Pass is now live with Free & Premium tracks! Unlock the Venom GT-X, Cyber Interceptor S1, dynamic neon underglow, exhaust flame trails, and the legendary Apex Valkyrie S1 hypercar.</div>
+            </div>
             <div class="mrs-news-card">
               <div class="mrs-news-date">August 28, 2026</div>
               <div class="mrs-news-head">Nitro Race SE Announced!</div>
@@ -51,6 +56,15 @@
               <p style="font-size:12px;margin-top:4px;">3 Maps (Desert, City, Snow), 2 unique cars, and silent pay runtime.</p>
             </div>
             <button id="mrs-games-se-btn" class="btn-primary" style="background:#8b5cf6;font-size:11px;padding:0 12px;min-height:30px;">View SE Tab</button>
+          </div>
+          <div class="mrs-game-card" style="border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);">
+            <div class="mrs-game-icon" style="background:linear-gradient(135deg,#e11d48,#f59e0b);">🏎️</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:14px;color:#f59e0b;">Nitro Race Anniversary Edition</div>
+              <div style="font-size:11px;color:var(--text-muted);">12.5 GB • $200.00 • Exclusive Edition</div>
+              <p style="font-size:12px;margin-top:4px;">300×300 Open World, 3 Anniversary Cars, 30 FPS lock, and Silent Pay.</p>
+            </div>
+            <button id="mrs-games-ae-btn" class="btn-primary" style="background:linear-gradient(90deg,#ef4444,#f59e0b);font-size:11px;padding:0 12px;min-height:30px;">View AE Tab</button>
           </div>
           <div class="mrs-game-card" style="opacity:0.6;border-style:dashed;">
             <div class="mrs-game-icon" style="background:#334155;">⏳</div>

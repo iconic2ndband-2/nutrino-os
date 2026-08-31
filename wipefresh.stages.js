@@ -1,19 +1,19 @@
 /* FILE: wipefresh.stages.js — Target OS version detection, wipe stage metadata & markup renderers */
 (function() {
   const LATEST_BUILD = {
-    version: 'v1.1.2.2',
+    version: 'v1.5.1',
     channel: 'Stable Release',
     kernel: 'Linux NOS 6.1.0-nutrino+',
-    buildDate: 'August 28, 2026',
+    buildDate: 'August 29, 2026',
     checksum: 'SHA256:7f8a91c0e84b23...d91a',
     status: 'Verified Clean Image Ready'
   };
 
   const WIPE_STAGES = [
     { title: 'Stage 1/5: Unmounting Storage & Services', desc: 'Closing background daemons, unlinking installed applications and killing sandbox locks...', color: '#f59e0b' },
-    { title: 'Stage 2/5: Cryptographic Data & Partition Purge', desc: 'Securely overwriting user sectors (IndexedDB, notes, gallery, tokens, credentials)...', color: '#ef4444' },
+    { title: 'Stage 2/5: Cryptographic Data & Partition Purge', desc: 'Securely overwriting user sectors in osdb (settings, bank, notes, gallery, tokens)...', color: '#ef4444' },
     { title: 'Stage 3/5: Verifying Target Firmware Build', desc: `Validating kernel payload for ${LATEST_BUILD.version} against cryptographic checksums...`, color: '#38bdf8' },
-    { title: 'Stage 4/5: Restoring Factory OS Manifest', desc: 'Writing clean default registries, SuperBank core database, and default themes...', color: '#a855f7' },
+    { title: 'Stage 4/5: Restoring Factory OS Manifest', desc: 'Writing clean default osdb registries, SuperBank core balance, and default themes...', color: '#a855f7' },
     { title: 'Stage 5/5: Finalizing Storage & Clean State', desc: 'Compacting virtual system partitions and preparing clean bootstrap sequence...', color: '#10b981' }
   ];
 
@@ -21,8 +21,8 @@
     LATEST_BUILD,
     WIPE_STAGES,
 
-    renderDashboard() {
-      const isGamesafeActive = window.os?.checkGamesafeSubscription?.() || false;
+    async renderDashboardAsync() {
+      const isGamesafeActive = window.os?.checkGamesafeSubscription ? await window.os.checkGamesafeSubscription() : false;
       const installedApps = window.os?.state?.installedApps || [];
       const osVer = window.CONSTANTS?.OS_VERSION || LATEST_BUILD.version;
 

@@ -1,4 +1,4 @@
-/* FILE: wipefresh.js — Factory Reset execution manager & modal triggers */
+/* FILE: wipefresh.js — Factory Reset execution manager & modal triggers with osdb */
 (function() {
   let currentContainer = null;
   let activeInterval = null;
@@ -34,14 +34,14 @@
       if (newStageIdx !== stageIdx) {
         stageIdx = newStageIdx;
         if (stageIdx === 1) {
-          addLog('Wiping partitions: /data /cache /system_state');
+          addLog('Wiping partitions: /osdb /cache /system_state');
           if (window.store && typeof window.store.clearAll === 'function') try { await window.store.clearAll(); } catch (e) {}
         } else if (stageIdx === 2) {
           addLog(`Verifying SHA256 integrity of clean kernel image ${build.version}...`);
           addLog('Checksum matched: OK (0 errors detected)');
         } else if (stageIdx === 3) {
           addLog('Restoring clean factory state & SuperBank balances...');
-          if (window.os?.resetFactory) window.os.resetFactory(keepGamesafe);
+          if (window.os?.resetFactory) await window.os.resetFactory(keepGamesafe);
         } else if (stageIdx === 4) {
           addLog('Flashing completed. Synchronizing hardware clock and file tables.');
           addLog('Triggering cold restart sequence...');
@@ -61,9 +61,9 @@
   }
 
   window.wipefreshApp = {
-    mount(container) {
+    async mount(container) {
       currentContainer = container;
-      container.innerHTML = window.wipefreshStages.renderDashboard();
+      container.innerHTML = await window.wipefreshStages.renderDashboardAsync();
       const build = window.wipefreshStages.LATEST_BUILD;
 
       const cancelBtn = container.querySelector('#wipe-cancel-btn');
@@ -89,7 +89,7 @@
           if (window.confirmModal) {
             window.confirmModal.show({
               title: 'Preserve Gamesafe & Wipe OS',
-              message: 'Factory reset will erase user files but retain your Gamesafe cloud credentials and saves.',
+              message: 'Factory reset will erase user files but retain your Gamesafe cloud credentials and saves in osdb.',
               icon: '🛡️', confirmText: 'Wipe & Keep Saves', cancelText: 'Cancel', isDestructive: false,
               onConfirm: () => executeWipeSequence(true)
             });
@@ -103,7 +103,7 @@
           if (window.confirmModal) {
             window.confirmModal.show({
               title: 'Full Erase All (Including Saves)',
-              message: 'Are you sure? This will wipe EVERYTHING, including Gamesafe saves and all data.',
+              message: 'Are you sure? This will wipe EVERYTHING, including Gamesafe saves and all osdb stores.',
               icon: '⚠️', confirmText: 'Erase Everything', cancelText: 'Cancel', isDestructive: true,
               onConfirm: () => executeWipeSequence(false)
             });

@@ -1,94 +1,41 @@
-/* FILE: store.js — IndexedDB local storage engine for persistent apps */
+/* FILE: store.js — Unified Storage Bridge for Notes & Gallery powered by osdb */
 (function() {
-  const DB_NAME = window.CONSTANTS.DB_NAME || 'NutrinoOS_DB';
-  const DB_VERSION = window.CONSTANTS.DB_VERSION || 1;
-  let dbInstance = null;
-
-  async function getDB() {
-    if (dbInstance) return dbInstance;
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains('notes')) {
-          db.createObjectStore('notes', { keyPath: 'id' });
-        }
-        if (!db.objectStoreNames.contains('gallery')) {
-          db.createObjectStore('gallery', { keyPath: 'id' });
-        }
-      };
-      request.onsuccess = (event) => {
-        dbInstance = event.target.result;
-        resolve(dbInstance);
-      };
-      request.onerror = (event) => {
-        reject(event.target.error);
-      };
-    });
-  }
-
   window.store = {
     async init() {
-      return getDB();
+      if (window.osdb) return window.osdb.init();
     },
 
     async put(storeName, item) {
-      const db = await getDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.put(item);
-        req.onsuccess = () => resolve(item);
-        req.onerror = (e) => reject(e.target.error);
-      });
+      if (!window.osdb) return item;
+      return window.osdb.put(storeName, item);
     },
 
     async get(storeName, id) {
-      const db = await getDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.get(id);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = (e) => reject(e.target.error);
-      });
+      if (!window.osdb) return null;
+      return window.osdb.get(storeName, id);
     },
 
     async getAll(storeName) {
-      const db = await getDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = (e) => reject(e.target.error);
-      });
+      if (!window.osdb) return [];
+      return window.osdb.getAll(storeName);
     },
 
     async delete(storeName, id) {
-      const db = await getDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.delete(id);
-        req.onsuccess = () => resolve(true);
-        req.onerror = (e) => reject(e.target.error);
-      });
+      if (!window.osdb) return false;
+      return window.osdb.delete(storeName, id);
+    },
+
+    async clear(storeName) {
+      if (!window.osdb) return false;
+      return window.osdb.clear(storeName);
     },
 
     async clearAll() {
-      const db = await getDB();
-      return new Promise((resolve, reject) => {
-        const stores = ['notes', 'gallery'];
-        const tx = db.transaction(stores, 'readwrite');
-        stores.forEach(s => {
-          if (db.objectStoreNames.contains(s)) {
-            tx.objectStore(s).clear();
-          }
-        });
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = (e) => reject(e.target.error);
-      });
+      if (!window.osdb) return false;
+      for (const s of ['notes', 'gallery']) {
+        await window.osdb.clear(s);
+      }
+      return true;
     },
 
     async getTotalStorageUsed() {
@@ -97,16 +44,12 @@
         const photos = await this.getAll('gallery');
         const notesCount = notes ? notes.length : 0;
         const photosCount = photos ? photos.length : 0;
-        const notesKB = notesCount * 1; // 1 KB each
-        const photosMB = photosCount * 2; // 2 MB each
-        const totalUserMB = (notesKB / 1024) + photosMB;
-        return {
-          notesCount,
-          photosCount,
-          notesKB,
-          photosMB,
-          totalUserMB: parseFloat(totalUserMB.toFixed(2))
-        };
+        let photosBytes = 0;
+        (photos || []).forEach(p => { photosBytes += (p.dataUrl || '').length; });
+        const photosMB = parseFloat((photosBytes / (1024 * 1024)).toFixed(2)) || (photosCount * 1.5);
+        const notesKB = parseFloat(((JSON.stringify(notes || []).length * 2) / 1024).toFixed(2)) || (notesCount * 0.5);
+        const totalUserMB = parseFloat(((notesKB / 1024) + photosMB).toFixed(2));
+        return { notesCount, photosCount, notesKB, photosMB, totalUserMB };
       } catch (err) {
         return { notesCount: 0, photosCount: 0, notesKB: 0, photosMB: 0, totalUserMB: 0 };
       }

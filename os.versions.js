@@ -1,7 +1,7 @@
-/* FILE: os.versions.js — App versioning, update check engine, and multi-version installer */
+/* FILE: os.versions.js — App versioning, update check engine, and multi-version installer with osdb */
 (function() {
-  const VER_PREFIX = 'nos_app_ver_';
   const scheduledTimers = {};
+  const activeVersionsCache = {};
 
   function compareVersions(v1, v2) {
     if (!v1 || !v2) return 0;
@@ -34,13 +34,13 @@
     },
 
     setActiveVersion(appId, version) {
-      localStorage.setItem(VER_PREFIX + appId, version);
+      activeVersionsCache[appId] = version;
+      if (window.osdb) window.osdb.put('installed', { id: 'ver_' + appId, val: version });
       return true;
     },
 
     getInstalledVersion(appId) {
-      const stored = localStorage.getItem(VER_PREFIX + appId);
-      if (stored) return stored;
+      if (activeVersionsCache[appId]) return activeVersionsCache[appId];
       const app = (window.CONSTANTS?.APPS || []).find(a => a.id === appId);
       return app?.version || '1.0.0';
     },
@@ -103,7 +103,7 @@
     },
 
     addUpdateBadge(appId) {
-      localStorage.setItem('nos_update_notified_' + appId, '1');
+      if (window.osdb) window.osdb.put('installed', { id: 'notified_' + appId, val: '1' });
     }
   };
 })();

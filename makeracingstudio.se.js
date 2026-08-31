@@ -33,6 +33,7 @@
 
   window.mrsSeTab = {
     render(container, onRefresh) {
+      if (downloadTimer) { clearInterval(downloadTimer); downloadTimer = null; }
       const isOgInstalled = window.os?.isAppInstalled('nitrorace');
       const isSeInstalled = window.os?.isAppInstalled('nitroracese');
       const meta = window.CONSTANTS.SE_GAME;
@@ -129,6 +130,7 @@
 
         if (elapsed >= totalMs) {
           clearInterval(downloadTimer);
+          downloadTimer = null;
           const statusEl = area.querySelector('#mrs-dl-status');
           if (statusEl) statusEl.textContent = 'Installing on Home Screen...';
           setTimeout(() => {

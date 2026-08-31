@@ -22,6 +22,18 @@
           </div>`;
       }
 
+      if (app.id === 'nitroraceae') {
+        return `
+          <div class="app-icon-item ${isEdit ? 'jiggle' : ''}" data-appid="${app.id}">
+            <div style="position:relative;width:56px;height:56px;margin:0 auto 4px;">
+              <canvas id="hs-nitroraceae-canvas" width="56" height="56" class="app-icon-badge" style="width:56px;height:56px;padding:0;border:none;box-shadow:0 4px 15px rgba(239,68,68,0.4);border-radius:14px;"></canvas>
+              ${isEdit ? `<button class="app-delete-badge" data-delid="${app.id}" title="Uninstall">✕</button>` : ''}
+              ${updateBadgeHtml}
+            </div>
+            <div class="app-icon-label" style="color:#f59e0b;font-weight:700;">${app.name}</div>
+          </div>`;
+      }
+
       return `
         <div class="app-icon-item ${isEdit && app.isDownloadable ? 'jiggle' : ''}" data-appid="${app.id}">
           <div class="app-icon-badge" style="background: ${app.color};">

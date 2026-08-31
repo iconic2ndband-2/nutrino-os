@@ -2,9 +2,51 @@
 
 All notable changes to the Nutrino OS project will be documented in this file.
 
+## [1.5.2] - 2026-08-31
+
+### Added
+- **Nitro Race Anniversary Edition (NRAE) (`nitroraceae.js`, `nitroraceae.menu.js`, `nitroraceae.game.js`, `nitroraceae.cars.js`, `nitroraceae.maps.js`, `nitroraceae.openworld.js`, `nitroraceae.screenshots.js`, `nitroraceae.controls.js`, `nitroraceae.icon.js`)**:
+  - Exclusive Anniversary Edition game distributed exclusively via `makeracingstudio.nos` (not available in SoftStore).
+  - 2-second custom loading screen with animated progress bar.
+  - Strict 30 FPS physics/render lock with high-precision delta timing and real-time FPS telemetry.
+  - 3 Playable Cars with distinctive tuning:
+    - **CR-1** (Common): Balanced acceleration, 180 km/h top speed, agile street handling.
+    - **FR-322** (Epic): High acceleration twin-turbo, 240 km/h top speed, responsive drift handling.
+    - **456JJ** (Legendary): Extreme quad-turbo, 320 km/h top speed, stiff racing suspension.
+  - 2 Playable Game Modes & Maps:
+    - **Default Map**: 3-lane dynamic highway track with AI traffic avoidance and milestone checkpoints.
+    - **Open World Map**: 300×300 unit 3D roamable environment with boundary fences, buildings, interactive ramps, dynamic mini-map with real-time player locator, and free-roam camera controls.
+  - **Silent Pay System**: Seamless runtime balance metering at $5.00/second directly deducted from SuperBank checking account. Real-time balance check terminates session with warning if funds deplete.
+  - **WebGL 2.0 / GPU Check**: Mandatory GPU hardware verification on launch; displays standard GPU failure screen if 3D acceleration is disabled or unsupported.
+  - **Orientation Lock**: Landscape mode required with responsive orientation warning screen if portrait mode is detected.
+  - **No Gamesafe / No Save System**: Raw arcade session persistence designed for pure anniversary celebration.
+  - **Static Motion Blur Icon**: Custom canvas icon with static motion blur streaks for the home screen grid.
+- **RaceMakingStudio Special Edition Integration (`makeracingstudio.se.js`, `makeracingstudio.nos.js`)**:
+  - Anniversary Edition tab featuring NRAE with 3 official dynamic Canvas screenshots (Car Selection Menu, Default Track Race, 300×300 Open World).
+  - Purchase flow ($200.00) with real-time SuperBank debiting.
+  - Simulated 12.5 GB download progress tracking calculated against user ISP bandwidth speed.
+  - Direct installation to Home Screen without SoftStore listing.
+
+---
+
 ## [1.5.1] - 2026-08-29
 
 ### Added
+- **Unified `osdb` IndexedDB Storage Engine (`osdb.js`, `store.js`, `os.js`)**:
+  - Replaced all legacy `localStorage` persistence with a single unified IndexedDB database named `osdb` (version 1).
+  - 9 structured object stores created natively: `settings`, `bank`, `internet`, `installed`, `notes`, `gallery`, `gamesafe`, `device`, `appdata`.
+  - Automatic, non-destructive migration on first boot: pulls existing legacy `localStorage` keys into their respective `osdb` stores and cleans up `localStorage`.
+  - Export and Import database backup functionality (`osdb.exportDatabase()`, `osdb.importDatabase()`).
+- **`real-osdb` Live Storage & Database Inspector App (`realosdb.js`, `realosdb.render.js`, `realosdb.screenshots.js`)**:
+  - Developed by *Rampage Report* (Utilities category, 10,000 MB, Free).
+  - Live 1-second storage telemetry polling across all 9 object stores.
+  - Interactive Store Explorer: filter by store, search records by key/query, view record sizes in bytes, and delete individual records.
+  - Live Storage Breakdown chart and raw JSON database export with copy-to-clipboard and file download.
+  - 4 Canvas screenshots generated dynamically in SoftStore (Overview, Stores, Search, Export) with screenshot tab switcher.
+- **Rampage Report Company Portal (`rampage-report.nos.js`, `browser.js`)**:
+  - Dedicated developer website on `.nos` sandbox network featuring dark red theme (`#1a0505`, `#ff3333`).
+  - 4 informational and telemetry tabs: Home, Products, About, Support.
+  - Direct integration with SoftStore for 1-click `real-osdb` acquisition.
 - **Official Developer Branding Architecture (`constants.js`, `softstore.js`, `softstoredetail.js`, `settingsapp.js`)**:
   - Registered official developer identities across the OS:
     - **Wipe Fresh**: Developed by *Byloop*
@@ -12,12 +54,14 @@ All notable changes to the Nutrino OS project will be documented in this file.
     - **3DPapers**: Developed by *CoolFrost*
     - **Gamesafe**: Developed by *WhiteGames*
     - **Truespecs**: Developed by *Truespecs Technologies*
+    - **real-osdb**: Developed by *Rampage Report*
   - **SoftStore Detail Integration**: App detail pages display prominent `Developer: [Name]` metadata with formatted typography.
   - **Settings App Manager**: Added an "Apps" section in Settings displaying all installed and catalog applications, their version, and official developer affiliations.
-- **Dedicated Company Websites on Sandbox Browser (`byloop.nos.js`, `coolfrost.nos.js`, `whitegames.nos.js`, `browser.js`)**:
+- **Dedicated Company Websites on Sandbox Browser (`byloop.nos.js`, `coolfrost.nos.js`, `whitegames.nos.js`, `rampage-report.nos.js`, `browser.js`)**:
   - **Byloop (`byloop.nos`)**: Dark blue/teal themed company portal with 5 interactive tabs (Home, About, Products, Support, Blog), featuring Wipe Fresh system recovery tools and direct SoftStore links.
   - **CoolFrost (`coolfrost.nos`)**: Cool blue/purple themed studio portal with 5 interactive tabs (Home, About, Products, Support, Blog), highlighting 3DPapers real-time WebGL engine shaders and battery preservation architecture.
   - **WhiteGames (`whitegames.nos`)**: High-contrast white/dark themed portal with 5 interactive tabs (Home, About, Products, Support, Blog), showcasing Gamesafe cloud save locking, security bulletins, and disaster recovery.
+  - **Rampage Report (`rampage-report.nos`)**: Dark red themed developer portal highlighting deep database inspection tools.
   - **Browser Bookmark Cards & Address Bar Resolver**: Added home screen cards for all newly added `.nos` domains in the browser start page with fast, localized routing and responsive bandwidth delays.
 
 ---

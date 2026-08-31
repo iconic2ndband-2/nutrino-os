@@ -47,6 +47,8 @@
         }
         const tsCanvas = container.querySelector('#hs-truespecs-canvas');
         if (tsCanvas && window.truespecsIcon?.mount) window.truespecsIcon.mount(tsCanvas);
+        const nraeCanvas = container.querySelector('#hs-nitroraceae-canvas');
+        if (nraeCanvas && window.nitroraceAeIcon?.mount) window.nitroraceAeIcon.mount(nraeCanvas);
 
         if (isEditMode) {
           const doneBtn = container.querySelector('#hs-done-edit-btn');
@@ -98,9 +100,9 @@
             }
             if (appId === 'phone') { window.animations?.showToast?.('Phone: Local Dialer Ready (Simulated)'); return; }
             if (appId === 'messages') { window.animations?.showToast?.('Messages: Offline Sandbox Ready'); return; }
-            if ((appId === 'nitrorace' || appId === 'nitroracese' || appId === '3dpapers') && !window.os?.canRun3D?.()) {
+            if ((appId === 'nitrorace' || appId === 'nitroracese' || appId === 'nitroraceae' || appId === '3dpapers') && !window.os?.canRun3D?.()) {
               const app = (window.CONSTANTS.APPS || []).find(a => a.id === appId);
-              window.osGpu?.showCrashScreen(container, app?.name || '3D Wallpaper Engine', window.os?.getInstalledVersion(appId), () => render());
+              window.osGpu?.showCrashScreen(container, app?.name || '3D Racing Engine', window.os?.getInstalledVersion(appId), () => render());
               return;
             }
             window.os.launchApp(appId);

@@ -1,6 +1,6 @@
 {
-  "name": "Nutrino OS v1.1.2.2",
-  "description": "Mobile web operating system simulation featuring company websites for Byloop, CoolFrost, and WhiteGames, developer branding across SoftStore and Settings, 3DPapers live 3D wallpaper engine with silent billing and 2-step login, Gamesafe multi-account cloud saves with re-login fee protection, SoftStore v2.0 with app versioning and update engine, GPU detection with 3D crash system, Truespecs hardware companion website and live rotating 2D canvas icon, real-time hardware diagnostics, makeracingstudio.nos company website, Nitro Race SE racer, SuperBank banking portal, 5-stage Wipe Fresh reset with godrays reboot, and full local persistence.",
+  "name": "Nutrino OS v1.5.1",
+  "description": "Mobile web operating system simulation featuring Nitro Race Anniversary Edition with 30 FPS lock, 3 cars, 300x300 open world map, $5/s Silent Pay, unified osdb IndexedDB persistence across 9 stores, and developer ecosystem.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

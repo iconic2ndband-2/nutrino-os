@@ -2,9 +2,10 @@
 (function() {
   let activeTab = 'home';
   const TABS = [
-    { id: 'home', label: 'Home' }, { id: 'games', label: 'Games' }, { id: 'about', label: 'About' },
+    { id: 'home', label: 'Home' }, { id: 'games', label: 'Games' }, { id: 'se', label: 'Special Edition ⭐' },
+    { id: 'ae', label: 'Anniversary Edition 🏆' }, { id: 'about', label: 'About' },
     { id: 'support', label: 'Support' }, { id: 'careers', label: 'Careers' },
-    { id: 'community', label: 'Community' }, { id: 'se', label: 'Special Edition ⭐' }
+    { id: 'community', label: 'Community' }
   ];
 
   function drawHomeBanner(container) {
@@ -78,9 +79,17 @@
         };
       } else if (activeTab === 'games') {
         tabBody.innerHTML = window.mrsTabs.renderGames();
-        tabBody.querySelector('#mrs-games-og-btn').onclick = () => window.os.launchApp('softstore');
-        tabBody.querySelector('#mrs-games-se-btn').onclick = () => {
+        const ogBtn = tabBody.querySelector('#mrs-games-og-btn');
+        if (ogBtn) ogBtn.onclick = () => window.os.launchApp('softstore');
+        const seBtn = tabBody.querySelector('#mrs-games-se-btn');
+        if (seBtn) seBtn.onclick = () => {
           activeTab = 'se';
+          const header = tabBody.closest('.mrs-website-root');
+          if (header) this.bindEvents(header.parentElement, refresh);
+        };
+        const aeBtn = tabBody.querySelector('#mrs-games-ae-btn');
+        if (aeBtn) aeBtn.onclick = () => {
+          activeTab = 'ae';
           const header = tabBody.closest('.mrs-website-root');
           if (header) this.bindEvents(header.parentElement, refresh);
         };
@@ -116,7 +125,9 @@
       } else if (activeTab === 'community') {
         tabBody.innerHTML = window.mrsTabs.renderCommunity();
       } else if (activeTab === 'se') {
-        window.mrsSeTab.render(tabBody, () => this.renderCurrentTab(tabBody, refresh));
+        window.mrsSeTab?.render(tabBody, () => this.renderCurrentTab(tabBody, refresh));
+      } else if (activeTab === 'ae') {
+        window.mrsAeTab?.render(tabBody, () => this.renderCurrentTab(tabBody, refresh));
       }
     }
   };

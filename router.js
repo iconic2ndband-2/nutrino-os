@@ -1,9 +1,6 @@
 /* FILE: router.js — Screen navigation manager and view transition router */
 (function() {
-  let viewportEl = null;
-  let currentScreen = null;
-  let currentAppModule = null;
-  let historyStack = [];
+  let viewportEl = null, currentScreen = null, currentAppModule = null, historyStack = [];
 
   const appMap = {
     clock: () => window.clockApp,
@@ -20,8 +17,10 @@
     truespecs: () => window.truespecsApp,
     nitrorace: () => window.nitroraceApp,
     nitroracese: () => window.nitroraceSeApp,
+    nitroraceae: () => window.nitroraceAeApp,
     gamesafe: () => window.gamesafe,
-    '3dpapers': () => window.threeDPapersApp
+    '3dpapers': () => window.threeDPapersApp,
+    realosdb: () => window.realosdbApp
   };
 
   window.router = {
@@ -40,7 +39,6 @@
 
       await window.animations.fadeOut(viewportEl, 120);
       viewportEl.innerHTML = '';
-
       currentScreen = screen;
       historyStack.push({ screen, appName });
 
@@ -60,14 +58,11 @@
             <div class="app-title">${appMeta.name}</div>
             <div style="width: 44px;"></div>
           </div>
-          <div id="app-content-body" class="app-content"></div>
-        `;
+          <div id="app-content-body" class="app-content"></div>`;
         viewportEl.appendChild(appScreenEl);
 
         const backBtn = appScreenEl.querySelector('#app-back-btn');
-        if (backBtn) {
-          backBtn.onclick = () => window.os.goBack();
-        }
+        if (backBtn) backBtn.onclick = () => window.os.goBack();
 
         const bodyContainer = appScreenEl.querySelector('#app-content-body');
         const getModule = appMap[appName];
@@ -86,11 +81,8 @@
       if (historyStack.length > 1) {
         historyStack.pop();
         const prev = historyStack.pop();
-        if (prev) {
-          this.navigate(prev.screen, prev.appName);
-        } else {
-          this.navigate('homescreen');
-        }
+        if (prev) this.navigate(prev.screen, prev.appName);
+        else this.navigate('homescreen');
       } else {
         this.navigate('homescreen');
       }
